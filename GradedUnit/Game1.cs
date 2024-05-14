@@ -101,36 +101,7 @@ namespace GradedUnit
                 public bool arrowAlive;                         // If the arrow is alive
             }
 
-            // Structure for enemySoldier
-            struct EnemySoldier
-            {
-                public Texture2D enemyTexture;                  // The texture for the enemy
-                public Rectangle enemyRectangle;                // The rectangle for the enemy
-                public Vector2 enemyOrigin;                     // The origin of the enemy
-                public Vector2 enemyPosition;                   // The position of the enemy
-                public int enemyHealth;                         // The health of the enemy
-                public bool enemyAlive;                         // If the enemy is alive
-                public int enemySpeed;                          // The speed of the enemy
-                public int enemyDamage;                         // The damage of the enemy
-                public int enemyScore;                          // The score of the enemy
-
-                // Constructor for the enemySoldier
-                public EnemySoldier(ContentManager content, string filename)
-                {
-                    enemyTexture = content.Load<Texture2D>(filename);                                      // Load the texture TODO: Add enemy texture
-                    enemyRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);          // Set the rectangle
-                    enemyOrigin.X = (float)enemyRectangle.Width / 2;                                        // Set the x origin of the enemy
-                    enemyOrigin.Y = (float)enemyRectangle.Height / 2;                                       // Set the y origin of the enemy
-
-                    // General
-                    enemyHealth = 30;                              // Set the health of the enemy
-                    enemyAlive = true;                             // Set the enemy to alive
-                    enemyPosition = new Vector2();                 // Set the enemy position
-                    enemySpeed = 1;                                // Set the speed of the enemy
-                    enemyDamage = 10;                              // Set the damage of the enemy
-                    enemyScore = 10;                               // Set the score of the enemy
-                }
-            }
+            
 
             // VARIABLES PART 2 //
             // TODO
@@ -139,7 +110,6 @@ namespace GradedUnit
             bool gameOver;                                                      // If the game is over
             PlayerSprite player;                                                // Player sprite
             ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
-            EnemySoldier enemySoldiers;                // Array of enemySoldiers **changed to single for debug
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -182,9 +152,6 @@ namespace GradedUnit
             // SoundEffect playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                               // Load the player move sound effect TODO: Add sound effect
             // Load the player sprite
             player = new PlayerSprite(Content, "0_Archer_Attack_1_000");                                                                        // Load the player sprite
-
-            // Load the enemySoldier
-            EnemySoldier enemySoldier = new EnemySoldier(Content, "E1");                                                              // Load the enemySoldier
             
             // Arrow setup
             for (int i = 0; i < arrows.Length; i++)                                                                                             // Loop through the arrows
@@ -266,10 +233,10 @@ namespace GradedUnit
 
                 // Enemy movement
             }   // End of !gameOver if
-            else
+            else // If the game is over
             {
                 gameOver = true; // Set the game to over
-            }
+            } // End of gameOver else
             previousKeyboardState = currentKeyboardState; // Set the previous keyboard state - Must be at the end of the update method
             base.Update(gameTime); // Update the game - Stays at the end of the update method   Down
         } // End of Update method                                                                ^^
@@ -322,8 +289,7 @@ namespace GradedUnit
 
 
                 /// ENEMIES ///
-                // Draw a single enemySoldiers
-                //_spriteBatch.Draw(enemySoldiers.enemyTexture, enemySoldiers.enemyPosition, null, Color.White, 0, enemySoldiers.enemyOrigin, 0.175f, SpriteEffects.None, 0); // Draw the enemySoldier
+                
 
                 // Draw the player
                 _spriteBatch.Draw(player.playerTexture, player.playerPosition, null, Color.White, 0, player.playerOrigin, 0.175f, SpriteEffects.None, 0); // Draw the player
