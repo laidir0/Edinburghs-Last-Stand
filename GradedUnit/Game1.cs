@@ -22,8 +22,7 @@ namespace GradedUnit
         private readonly GraphicsDeviceManager _graphics; // TODO: not sure if needed, made readonly for time being
         private SpriteBatch _spriteBatch;
 
-        // VARIABLES //
-        // TODO: Add variables here
+        // Lane logic - TODO: Move to own class/function
         private static int _lane = 2; // The lane the player is in
         public static int Lane
         {
@@ -60,8 +59,6 @@ namespace GradedUnit
             } // End of backgroundStruct constructor
         } // End of backgroundStruct
 
-        
-
         // 2D structure for the player sprite
         struct PlayerSprite
         {
@@ -96,20 +93,42 @@ namespace GradedUnit
                 public Rectangle arrowRectangle;                // The rectangle for the arrow
                 public Vector3 arrowPosition;                   // The position of the arrow
                 public Vector2 arrowOrigin;                      // The origin of the arrow
-                public Vector3 arrowVelocity;                   // The velocity of the arrow
                 public BoundingSphere arrowBoundingSphere;      // The bounding sphere of the arrow
                 public bool arrowAlive;                         // If the arrow is alive
             }
 
-            
+            // Structure for the enemies
+            struct EnemyStruct
+            {
+                public Texture2D enemyTexture;                  // The texture for the enemy
+                public Rectangle enemyRectangle;                // The rectangle for the enemy
+                public Vector2 enemyOrigin;                     // The origin of the enemy
+                public Vector2 enemyPosition;                   // The position of the enemy
+                public int enemyHealth;                         // The health of the enemy
+                public bool enemyAlive;                         // If the enemy is alive
 
-            // VARIABLES PART 2 //
-            // TODO
+                // Constructor for the enemy
+                public EnemyStruct(ContentManager content, string filename)
+                {
+                    enemyTexture = content.Load<Texture2D>(filename);                                      // Load the texture
+                    enemyRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);         // Set the rectangle
+                    enemyOrigin.X = (float)enemyRectangle.Width / 2;                                        // Set the x origin of the enemy
+                    enemyOrigin.Y = (float)enemyRectangle.Height / 2;                                       // Set the y origin of the enemy
+
+                    // General
+                    enemyHealth = 30;                             // Set the health of the enemy
+                    enemyAlive = true;                             // Set the enemy to alive
+                    enemyPosition = new Vector2();                 // Set the enemy position
+                }
+            }
+
+            // VARIABLES
             BackgroundStruct gameBackground, gameOverBackground;                // Background and game over screen
             SpriteFont mainFont;                                                // Main font
             bool gameOver;                                                      // If the game is over
             PlayerSprite player;                                                // Player sprite
             ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
+            EnemyStruct[] enemies = new EnemyStruct[100];                        // Array of enemies
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -150,6 +169,7 @@ namespace GradedUnit
 
             // Load sounds
             // SoundEffect playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                               // Load the player move sound effect TODO: Add sound effect
+
             // Load the player sprite
             player = new PlayerSprite(Content, "0_Archer_Attack_1_000");                                                                        // Load the player sprite
             
@@ -163,6 +183,15 @@ namespace GradedUnit
                 arrows[i].arrowAlive = false;                                                                                                   // Set the arrow to not alive
             } // End of arrow setup
 
+            // Enemy setup
+            for (int i = 0; i < enemies.Length; i++)                                                                                           // Loop through the enemies
+            {
+                enemies[i].enemyTexture = Content.Load<Texture2D>("E1");                                                                      // Load the enemy texture
+                enemies[i].enemyRectangle = new Rectangle(0, 0, enemies[i].enemyTexture.Width, enemies[i].enemyTexture.Height);                // Set the enemy rectangle
+                enemies[i].enemyOrigin.X = (float)enemies[i].enemyRectangle.Width / 2;                                                          // Set the x origin of the enemy
+                enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
+                enemies[i].enemyAlive = false;                                                                                                  // Set the enemy to not alive
+            } // End of enemy setup
         } // End of LoadContent
 
         KeyboardState previousKeyboardState = Keyboard.GetState();  // The previous keyboard state - Set once outside of update
@@ -193,7 +222,7 @@ namespace GradedUnit
                     // playerMoveSFX.Play();   // Play the player move sound effect TODO: Add sound effect
                 }
 
-                // Set player positions based on lane
+                // Set player positions based on lane - TODO: Move to own function, maybe properly define lanes...
                 if (Game1.Lane == 0)
                     player.playerPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, tileSize / 2);       // Set the player position to the left most lane - 0
                 else if (Game1.Lane == 1)
@@ -213,7 +242,6 @@ namespace GradedUnit
                         {
                             arrows[i].arrowAlive = true; // Set the arrow to alive
                             arrows[i].arrowPosition = new Vector3(player.playerPosition.X, player.playerPosition.Y, 0); // Set the arrow position
-                            arrows[i].arrowVelocity = new Vector3(0, 0, 0); // Set the arrow velocity
                             break; // Break the loop
                         }
                 }
@@ -231,6 +259,13 @@ namespace GradedUnit
                             arrows[i].arrowAlive = false; // Set the arrow to not alive
                     }
 
+                // Enemy spawning
+                // For testing purposes adding 1 zombie at the start of the game
+                if (!enemies[0].enemyAlive) // If the enemy is not alive
+                {
+                    enemies[0].enemyAlive = true; // Set the enemy to alive
+                    enemies[0].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
+                }
                 // Enemy movement
             }   // End of !gameOver if
             else // If the game is over
@@ -256,10 +291,9 @@ namespace GradedUnit
             {
                 // Draw the background
                 // _spriteBatch.Draw(gameBackground.backgroundTexture, gameBackground.backgroundRectangle, Color.White);    // Draw the background TODO: Add background texture
-                // Draw the tiles on row 0 light grey as placeholder till background is added
+                // Draw grey as placeholder till background is added
                 _spriteBatch.Draw(tileTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, tileSize), Color.LightGray); // Draw the light grey box for under player feet
                 _spriteBatch.Draw(tileTexture, new Rectangle(0, tileSize, GraphicsDevice.Viewport.Width, tileSize), Color.DarkGray); // Draw the dark grey box to represent the castle
-                // Draw temporary dark grey tiles on left and right side of the lanes
                 _spriteBatch.Draw(tileTexture, new Rectangle((3 * tileSize), (2*tileSize), tileSize, GraphicsDevice.Viewport.Height), Color.DarkGray); // Draw the dark grey box for the lane
                 _spriteBatch.Draw(tileTexture, new Rectangle((14 * tileSize), (2 * tileSize), tileSize, GraphicsDevice.Viewport.Height), Color.DarkGray); // Draw the dark grey box for the lane
                 // ^^Temp stuff for background
@@ -289,7 +323,9 @@ namespace GradedUnit
 
 
                 /// ENEMIES ///
-                
+                for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                    if (enemies[i].enemyAlive) // If the enemy is alive
+                        _spriteBatch.Draw(enemies[i].enemyTexture, enemies[i].enemyPosition, null, Color.White, 0, enemies[i].enemyOrigin, 0.175f, SpriteEffects.None, 0); // Draw the enemy
 
                 // Draw the player
                 _spriteBatch.Draw(player.playerTexture, player.playerPosition, null, Color.White, 0, player.playerOrigin, 0.175f, SpriteEffects.None, 0); // Draw the player
@@ -302,5 +338,5 @@ namespace GradedUnit
             _spriteBatch.End();
             base.Draw(gameTime);
         } // End of Draw
-    } // End of Game1
+    } // End of Game1 class
 } // End of GradedUnit Program
