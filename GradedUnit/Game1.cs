@@ -123,7 +123,7 @@ namespace GradedUnit
                     enemyHealth = 30;                             // Set the health of the enemy
                     enemyAlive = true;                             // Set the enemy to alive
                     enemyPosition = new Vector2();                 // Set the enemy position
-                    spawnCooldown = 1f;                              // Set the spawn cooldown
+                    spawnCooldown = 10f;                              // Set the spawn cooldown
                     spawnTime = spawnCooldown;                              // Set the spawn time
                 }
             }
@@ -265,13 +265,19 @@ namespace GradedUnit
                             arrows[i].arrowAlive = false; // Set the arrow to not alive
                     }
 
-                // Enemy spawning
-                // For testing purposes adding 1 zombie at the start of the game
-                if (!enemies[0].enemyAlive) // If the enemy is not alive
-                {
-                    enemies[0].enemyAlive = true; // Set the enemy to alive
-                    enemies[0].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
-                }
+                // Enemy spawning based on wave number for quantity and time delay between spawns
+                for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                    if (!enemies[i].enemyAlive) // If the enemy is not alive
+                    {
+                        enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
+                        if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
+                        {
+                            enemies[i].enemyAlive = true; // Set the enemy to alive
+                            enemies[i].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
+                            enemies[i].spawnTime = enemies[i].spawnCooldown; // Reset the spawn time
+                        }
+                    }
+
                 // Enemy movement
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
                     if (enemies[i].enemyAlive) // If the enemy is alive
