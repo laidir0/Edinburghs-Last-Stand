@@ -104,6 +104,7 @@ namespace GradedUnit
                 public Rectangle enemyRectangle;                // The rectangle for the enemy
                 public Vector2 enemyOrigin;                     // The origin of the enemy
                 public Vector2 enemyPosition;                   // The position of the enemy
+                public int enemySpeed;                          // The speed of the enemy
                 public int enemyHealth;                         // The health of the enemy
                 public bool enemyAlive;                         // If the enemy is alive
                 public BoundingSphere enemyBoundingSphere;     // The bounding sphere of the enemy
@@ -121,6 +122,7 @@ namespace GradedUnit
 
                     // General
                     enemyHealth = 30;                             // Set the health of the enemy
+                    enemySpeed = 1;                               // Set the speed of the enemy
                     enemyAlive = true;                             // Set the enemy to alive
                     enemyPosition = new Vector2();                 // Set the enemy position
                     spawnCooldown = 10f;                              // Set the spawn cooldown
@@ -282,7 +284,7 @@ namespace GradedUnit
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
                     if (enemies[i].enemyAlive) // If the enemy is alive
                     {
-                        enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen
+                        enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen - TODO: Change to enemy speed - currently does not work
                         enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
                         enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
                         enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
