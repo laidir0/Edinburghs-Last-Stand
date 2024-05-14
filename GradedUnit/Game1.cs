@@ -151,7 +151,7 @@ namespace GradedUnit
                 {
                     PreferredBackBufferWidth = 1920,            // 1920x1080
                     PreferredBackBufferHeight = 1080,
-                    IsFullScreen = true,
+                    IsFullScreen = false,
                 };
                 Content.RootDirectory = "Content";              // Set the content directory
                 IsMouseVisible = true;                          // Show the mouse
@@ -215,12 +215,12 @@ namespace GradedUnit
                 mouseTilePosition = new Vector2(Mouse.GetState().Position.X / tileSize, Mouse.GetState().Position.Y / tileSize);    // Divide the mouse position by the tile size to get the tile position
 
                 // Move the player character between lanes
-                if (currentKeyboardState.IsKeyDown(Keys.Left) && !previousKeyboardState.IsKeyDown(Keys.Left))
+                if (currentKeyboardState.IsKeyDown(Keys.Left) && !previousKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A) && !previousKeyboardState.IsKeyDown(Keys.A))
                 {
                     Game1.Lane--; // Move to the left lane
                     // playerMoveSFX.Play();   // Play the player move sound effect TODO: Add sound effect
                 }
-                else if (currentKeyboardState.IsKeyDown(Keys.Right) && !previousKeyboardState.IsKeyDown(Keys.Right))
+                else if (currentKeyboardState.IsKeyDown(Keys.Right) && !previousKeyboardState.IsKeyDown(Keys.Right) || currentKeyboardState.IsKeyDown(Keys.D) && !previousKeyboardState.IsKeyDown(Keys.D))
                 {
                     Game1.Lane++; // Move to the right lane
                     // playerMoveSFX.Play();   // Play the player move sound effect TODO: Add sound effect
@@ -289,14 +289,21 @@ namespace GradedUnit
             {
                 // Draw the background
                 // _spriteBatch.Draw(gameBackground.backgroundTexture, gameBackground.backgroundRectangle, Color.White);    // Draw the background TODO: Add background texture
+                // Draw the tiles on row 0 light grey as placeholder till background is added
+                _spriteBatch.Draw(tileTexture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, tileSize), Color.LightGray); // Draw the light grey box for under player feet
+                _spriteBatch.Draw(tileTexture, new Rectangle(0, tileSize, GraphicsDevice.Viewport.Width, tileSize), Color.DarkGray); // Draw the dark grey box to represent the castle
+                // Draw temporary dark grey tiles on left and right side of the lanes
+                _spriteBatch.Draw(tileTexture, new Rectangle((3 * tileSize), (2*tileSize), tileSize, GraphicsDevice.Viewport.Height), Color.DarkGray); // Draw the dark grey box for the lane
+                _spriteBatch.Draw(tileTexture, new Rectangle((14 * tileSize), (2 * tileSize), tileSize, GraphicsDevice.Viewport.Height), Color.DarkGray); // Draw the dark grey box for the lane
+                // ^^Temp stuff for background
+
 
                 _spriteBatch.Draw(tileTexture, new Rectangle(0, 0, tileSize * 3, GraphicsDevice.Viewport.Height), Color.Black);    // Draw the black box for under text
 
-                // Highlight the tile the mouse is over
-                for (int x = (int)mouseTilePosition.X - range; x <= (int)mouseTilePosition.X + range; x++)                          // Loop through the tiles around the mouse first with x
-                    for (int y = (int)mouseTilePosition.Y - range; y <= (int)mouseTilePosition.Y + range; y++)                      // then y
-                        _spriteBatch.Draw(tileTexture, new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize), Color.Red);   // Draw the tile in red so it is clear to the player
-
+                // If the mouse has the same x axis as one of the lanes highlight the tile the mouse is over
+                if (mouseTilePosition.X > 3 && mouseTilePosition.X < 14 && mouseTilePosition.Y > 1) // If the mouse is over the lanes
+                    _spriteBatch.Draw(tileTexture, new Rectangle((int)mouseTilePosition.X * tileSize, (int)mouseTilePosition.Y * tileSize, tileSize, tileSize), Color.Red); // Draw the tile in red so it is clear to the player
+                    
                 // Draw the tiles
                 for (int x = 0; x < GraphicsDevice.Viewport.Width; x += tileSize)                                                   // Loop through the screen width
                     _spriteBatch.Draw(tileTexture, new Rectangle(x, 0, 1, GraphicsDevice.Viewport.Height), Color.Black);            // Draw a vertical line
@@ -316,7 +323,7 @@ namespace GradedUnit
 
                 /// ENEMIES ///
                 // Draw a single enemySoldiers
-                _spriteBatch.Draw(enemySoldiers.enemyTexture, enemySoldiers.enemyPosition, null, Color.White, 0, enemySoldiers.enemyOrigin, 0.175f, SpriteEffects.None, 0); // Draw the enemySoldier
+                //_spriteBatch.Draw(enemySoldiers.enemyTexture, enemySoldiers.enemyPosition, null, Color.White, 0, enemySoldiers.enemyOrigin, 0.175f, SpriteEffects.None, 0); // Draw the enemySoldier
 
                 // Draw the player
                 _spriteBatch.Draw(player.playerTexture, player.playerPosition, null, Color.White, 0, player.playerOrigin, 0.175f, SpriteEffects.None, 0); // Draw the player
