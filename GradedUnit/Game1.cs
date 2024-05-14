@@ -106,6 +106,9 @@ namespace GradedUnit
                 public Vector2 enemyPosition;                   // The position of the enemy
                 public int enemyHealth;                         // The health of the enemy
                 public bool enemyAlive;                         // If the enemy is alive
+                public BoundingSphere enemyBoundingSphere;     // The bounding sphere of the enemy
+                public float spawnTime;                           // The time it takes for the enemy to spawn
+                public float spawnCooldown;                       // The cooldown for the enemy to spawn
 
                 // Constructor for the enemy
                 public EnemyStruct(ContentManager content, string filename)
@@ -114,11 +117,14 @@ namespace GradedUnit
                     enemyRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);         // Set the rectangle
                     enemyOrigin.X = (float)enemyRectangle.Width / 2;                                        // Set the x origin of the enemy
                     enemyOrigin.Y = (float)enemyRectangle.Height / 2;                                       // Set the y origin of the enemy
+                    enemyBoundingSphere = new BoundingSphere();                                             // Set the bounding sphere of the enemy
 
                     // General
                     enemyHealth = 30;                             // Set the health of the enemy
                     enemyAlive = true;                             // Set the enemy to alive
                     enemyPosition = new Vector2();                 // Set the enemy position
+                    spawnCooldown = 1f;                              // Set the spawn cooldown
+                    spawnTime = spawnCooldown;                              // Set the spawn time
                 }
             }
 
@@ -267,6 +273,14 @@ namespace GradedUnit
                     enemies[0].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
                 }
                 // Enemy movement
+                for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                    if (enemies[i].enemyAlive) // If the enemy is alive
+                    {
+                        enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen
+                        enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
+                        enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
+                        enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
+                    }
             }   // End of !gameOver if
             else // If the game is over
             {
