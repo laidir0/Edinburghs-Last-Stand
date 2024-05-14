@@ -264,7 +264,7 @@ namespace GradedUnit
                             arrows[i].arrowAlive = false; // Set the arrow to not alive
                     }
 
-                
+                // Enemy movement
             }   // End of !gameOver if
             else
             {
@@ -316,8 +316,7 @@ namespace GradedUnit
 
                 /// ENEMIES ///
                 // Draw a single enemySoldiers
-                if (enemySoldiers.enemyAlive) // If the enemy is alive
-                    _spriteBatch.Draw(enemySoldiers.enemyTexture, new Vector2(1080, 800), null, Color.White, 0, enemySoldiers.enemyOrigin, 1f, SpriteEffects.None, 0); // Draw the enemy
+                _spriteBatch.Draw(enemySoldiers.enemyTexture, enemySoldiers.enemyPosition, null, Color.White, 0, enemySoldiers.enemyOrigin, 0.175f, SpriteEffects.None, 0); // Draw the enemySoldier
 
                 // Draw the player
                 _spriteBatch.Draw(player.playerTexture, player.playerPosition, null, Color.White, 0, player.playerOrigin, 0.175f, SpriteEffects.None, 0); // Draw the player
