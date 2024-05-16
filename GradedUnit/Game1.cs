@@ -71,7 +71,7 @@ namespace GradedUnit
                 public int score;                               // The score of the player
 
                 // Constructor for the player
-                public PlayerSprite(ContentManager content, string filename)    
+                public PlayerSprite(ContentManager content, string filename)
                 {
                     playerTexture = content.Load<Texture2D>(filename);                                      // Load the texture
                     playerRectangle = new Rectangle(0, 0, playerTexture.Width, playerTexture.Height);       // Set the rectangle
@@ -108,8 +108,7 @@ namespace GradedUnit
                 public int enemyHealth;                         // The health of the enemy
                 public bool enemyAlive;                         // If the enemy is alive
                 public BoundingSphere enemyBoundingSphere;     // The bounding sphere of the enemy
-                public float spawnTime;                           // The time it takes for the enemy to spawn
-                public float spawnCooldown;                       // The cooldown for the enemy to spawn
+                public float spawnTime;                           // The time the last enemy was spawned
 
                 // Constructor for the enemy
                 public EnemyStruct(ContentManager content, string filename)
@@ -125,8 +124,7 @@ namespace GradedUnit
                     enemySpeed = 1;                               // Set the speed of the enemy
                     enemyAlive = true;                             // Set the enemy to alive
                     enemyPosition = new Vector2();                 // Set the enemy position
-                    spawnCooldown = 10f;                              // Set the spawn cooldown
-                    spawnTime = spawnCooldown;                              // Set the spawn time
+                    spawnTime = 0;                              // Set the spawn time
                 }
             }
 
@@ -140,9 +138,11 @@ namespace GradedUnit
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
+            // A timer for the game equal to gametime
+            
 
 
-            public Game1()                                      // Machine things - Set the window size, fullscreen, mouse visibility and content directory
+            public Game1()                                      // Machine things - Set the w   indow size, fullscreen, mouse visibility and content directory
             {
                 _graphics = new GraphicsDeviceManager(this)     // Set the window size
                 {
@@ -199,6 +199,7 @@ namespace GradedUnit
                 enemies[i].enemyOrigin.X = (float)enemies[i].enemyRectangle.Width / 2;                                                          // Set the x origin of the enemy
                 enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
                 enemies[i].enemyAlive = false;                                                                                                  // Set the enemy to not alive
+               // enemies[i].spawnTime = GameTime.totsl seconds + (rand.Next(3,6) * (i+1));                                                                                          // Set the spawn time
             } // End of enemy setup
         } // End of LoadContent
 
@@ -206,7 +207,7 @@ namespace GradedUnit
 
         protected override void Update(GameTime gameTime) // Update the game - ran every frame
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))    
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit(); // Exit the game if the back button is pressed or the escape key is pressed
 
             // Get keyboard and mouse state
@@ -267,18 +268,32 @@ namespace GradedUnit
                             arrows[i].arrowAlive = false; // Set the arrow to not alive
                     }
 
-                // Enemy spawning based on wave number for quantity and time delay between spawns
-                for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
-                    if (!enemies[i].enemyAlive) // If the enemy is not alive
-                    {
-                        enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
-                        if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
+                // Enemy spawning attempt 1 - spawns all enemies at once :/
+                //for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                    //if (!enemies[i].enemyAlive) // If the enemy is not alive
+                    //{
+                        //enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
+                        //if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
+                        //{
+                          //  enemies[i].enemyAlive = true; // Set the enemy to alive
+                        //    enemies[i].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
+                      //      enemies[i].spawnTime = 10f; // Reset the spawn time
+                    //    }
+                  //  }
+
+                  // Enemy spawning attempt 2 - spawns one enemy at a time with a second delay
+                    for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                        if (!enemies[i].enemyAlive) // If the enemy is not alive
                         {
-                            enemies[i].enemyAlive = true; // Set the enemy to alive
-                            enemies[i].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
-                            enemies[i].spawnTime = enemies[i].spawnCooldown; // Reset the spawn time
+                            enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
+                            if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
+                            {
+                                enemies[i].enemyAlive = true; // Set the enemy to alive
+                                enemies[i].enemyPosition = new Vector2(rand.Next(3, 14) * tileSize, GraphicsDevice.Viewport.Height - tileSize); // Set the enemy position
+                                // enemies[i].spawnTime = (float)(gameTime.TotalGameTime.TotalSeconds) + (rand.Next(3,6) * i);
+                                break; // Break the loop
+                            }
                         }
-                    }
 
                 // Enemy movement
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
@@ -361,4 +376,8 @@ namespace GradedUnit
             base.Draw(gameTime);
         } // End of Draw
     } // End of Game1 class
+
+    // User Functions //
+    // Initialise enemies function
+    
 } // End of GradedUnit Program
