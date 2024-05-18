@@ -148,7 +148,7 @@ namespace GradedUnit
                 {
                     PreferredBackBufferWidth = 1920,            // 1920x1080
                     PreferredBackBufferHeight = 1080,
-                    IsFullScreen = false,
+                    IsFullScreen = true,
                 };
                 Content.RootDirectory = "Content";              // Set the content directory
                 IsMouseVisible = true;                          // Show the mouse
@@ -276,7 +276,7 @@ namespace GradedUnit
                             if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
                             {
                                 enemies[i].enemyAlive = true; // Set the enemy to alive
-                                
+
                                 // Set enemy position to spawn at the bottom of the screen in one of the 5 lanes
                                 if (rand.Next(0, 5) == 0) // If the random number is 0
                                     enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, GraphicsDevice.Viewport.Height); // Set the enemy position to the left most lane
