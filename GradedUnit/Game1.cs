@@ -348,7 +348,7 @@ namespace GradedUnit
             if (gameOver)   // If the game is over
             {
                 _spriteBatch.Draw(gameOverBackground.backgroundTexture, gameOverBackground.backgroundRectangle, Color.White);       // Draw the game over screen
-                _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2(10, 10), Color.Black);                      // Draw the score
+                _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2((GraphicsDevice.Viewport.Width / 2) - 50, GraphicsDevice.Viewport.Height - 150), Color.White); // Draw the score
             }
             else            // If the game is not over
             {
