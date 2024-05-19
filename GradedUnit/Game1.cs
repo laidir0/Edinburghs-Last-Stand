@@ -379,7 +379,7 @@ namespace GradedUnit
                 _spriteBatch.DrawString(mainFont, "Enemies: " + 0, new Vector2(10, 40), Color.White);                           // Draw the enemies remaining.... when possible TODO: Add enemies remaining
                 _spriteBatch.DrawString(mainFont, "Wave: " + 1, new Vector2(10, GraphicsDevice.Viewport.Height - 40), Color.White); // Draw the wave number.... when possible TODO: Add enemies remaining
                 _spriteBatch.DrawString(mainFont, "HP: ", new Vector2(10, GraphicsDevice.Viewport.Height - 80), Color.White); // Draw the player health
-                _spriteBatch.Draw(tileTexture, new Rectangle(65, GraphicsDevice.Viewport.Height - 75, 204, 24), Color.DarkRed); // Draw the player health bar outline
+                _spriteBatch.Draw(tileTexture, new Rectangle(65, GraphicsDevice.Viewport.Height - 75, 184, 24), Color.White); // Draw the player health bar outline
                 _spriteBatch.Draw(tileTexture, new Rectangle(67, GraphicsDevice.Viewport.Height - 73, player.playerHealth * 2, 20), Color.Red); // Draw the player health bar
                 // ^^That is quite lazy, will need to change healthbar to be a set size and diminish based on a percentage of health lost
 
