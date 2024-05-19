@@ -148,7 +148,7 @@ namespace GradedUnit
                 {
                     PreferredBackBufferWidth = 1920,            // 1920x1080
                     PreferredBackBufferHeight = 1080,
-                    IsFullScreen = true,
+                    IsFullScreen = true
                 };
                 Content.RootDirectory = "Content";              // Set the content directory
                 IsMouseVisible = true;                          // Show the mouse
@@ -309,6 +309,22 @@ namespace GradedUnit
                             player.playerHealth -= 10; // Decrease the player health
                         }
                     }
+
+                    // Arrow collision with enemies
+                    for (int i = 0; i < arrows.Length; i++) // Loop through the arrows
+                        if (arrows[i].arrowAlive) // If the arrow is alive
+                            for (int j = 0; j < enemies.Length; j++) // Loop through the enemies
+                                if (enemies[j].enemyAlive) // If the enemy is alive
+                                    if (arrows[i].arrowBoundingSphere.Intersects(enemies[j].enemyBoundingSphere)) // If the arrow intersects the enemy
+                                    {
+                                        arrows[i].arrowAlive = false; // Set the arrow to not alive
+                                        enemies[j].enemyHealth -= 10; // Decrease the enemy health
+                                        if (enemies[j].enemyHealth <= 0) // If the enemy health is less than or equal to 0
+                                        {
+                                            enemies[j].enemyAlive = false; // Set the enemy to not alive
+                                            player.score += 10; // Increase the player score
+                                        }
+                                    }
             }   // End of !gameOver if
             else // If the game is over
             {
@@ -383,6 +399,5 @@ namespace GradedUnit
     } // End of Game1 class
 
     // User Functions //
-    // Initialise enemies function
     
 } // End of GradedUnit Program
