@@ -325,8 +325,12 @@ namespace GradedUnit
                                             player.score += 10; // Increase the player score
                                         }
                                     }
+
+                    // Game over
+                    if (player.playerHealth <= 0) // If the player health is less than or equal to 0
+                        gameOver = true; // Set the game to over
             }   // End of !gameOver if
-            else // If the game is over
+            else // If the game is over -- Do I need this? think it can be removed but idk yet tbh
             {
                 gameOver = true; // Set the game to over
             } // End of gameOver else
