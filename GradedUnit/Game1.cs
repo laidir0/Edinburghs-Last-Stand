@@ -276,6 +276,7 @@ namespace GradedUnit
                             if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
                             {
                                 enemies[i].enemyAlive = true; // Set the enemy to alive
+                                enemies[i].enemyHealth = 30; // Set the enemy health
 
                                 // Set enemy position to spawn at the bottom of the screen in one of the 5 lanes
                                 if (rand.Next(0, 5) == 0) // If the random number is 0
