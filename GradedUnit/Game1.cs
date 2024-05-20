@@ -122,7 +122,7 @@ namespace GradedUnit
                     // General
                     enemyHealth = 30;                             // Set the health of the enemy
                     enemySpeed = 1;                               // Set the speed of the enemy
-                    enemyAlive = true;                             // Set the enemy to alive
+                    enemyAlive = false;                             // Set the enemy to alive
                     enemyPosition = new Vector2();                 // Set the enemy position
                     spawnTime = 0;                              // Set the spawn time
                 }
@@ -134,7 +134,7 @@ namespace GradedUnit
             bool gameOver;                                                      // If the game is over
             PlayerSprite player;                                                // Player sprite
             ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
-            EnemyStruct[] enemies = new EnemyStruct[5];                        // Array of enemies
+            EnemyStruct[] enemies = new EnemyStruct[50];                        // Array of enemies
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -199,7 +199,6 @@ namespace GradedUnit
                 enemies[i].enemyOrigin.X = (float)enemies[i].enemyRectangle.Width / 2;                                                          // Set the x origin of the enemy
                 enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
                 enemies[i].enemyAlive = false;                                                                                                  // Set the enemy to not alive
-               // enemies[i].spawnTime = GameTime.totsl seconds + (rand.Next(3,6) * (i+1));                                                                                          // Set the spawn time
             } // End of enemy setup
         } // End of LoadContent
 
@@ -289,7 +288,7 @@ namespace GradedUnit
                                     enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, GraphicsDevice.Viewport.Height); // Set the enemy position to the next lane to the right
                                 else if (rand.Next(0, 5) == 4) // If the random number is 4
                                     enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, GraphicsDevice.Viewport.Height); // Set the enemy position to the right most lane
-                                // enemies[i].spawnTime = (float)(gameTime.TotalGameTime.TotalSeconds) + (rand.Next(3,6) * i);
+                                enemies[i].spawnTime = 3;
                                 break; // Break the loop
                             }
                         }
@@ -308,6 +307,7 @@ namespace GradedUnit
                         {
                             enemies[i].enemyAlive = false; // Set the enemy to not alive
                             player.playerHealth -= 10; // Decrease the player health
+                            
                         }
                     }
 
@@ -328,8 +328,8 @@ namespace GradedUnit
                                     }
 
                     // Game over
-                    if (player.playerHealth <= 0) // If the player health is less than or equal to 0
-                        gameOver = true; // Set the game to over
+                    //if (player.playerHealth <= 0) // If the player health is less than or equal to 0
+                       // gameOver = true; // Set the game to over
             }   // End of !gameOver if
             else // If the game is over -- Do I need this? think it can be removed but idk yet tbh
             {
@@ -401,8 +401,8 @@ namespace GradedUnit
             _spriteBatch.End();
             base.Draw(gameTime);
         } // End of Draw
-    } // End of Game1 class
 
-    // User Functions //
-    
+        // User defined functions
+
+    } // End of Game1 class
 } // End of GradedUnit Program
