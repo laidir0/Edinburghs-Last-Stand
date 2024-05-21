@@ -109,6 +109,12 @@
 /processorParam:TextureFormat=Color
 /build:gameover.jpg
 
+#begin Production Element Title Transition Blast Short Hit 07.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Production Element Title Transition Blast Short Hit 07.wav
+
 #begin quartz4.png
 /importer:TextureImporter
 /processor:FontTextureProcessor

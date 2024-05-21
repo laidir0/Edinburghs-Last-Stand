@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 // Zachary Thomson 2024
 // Graded Unit
@@ -106,7 +107,6 @@ namespace GradedUnit
                 public Rectangle enemyRectangle;                // The rectangle for the enemy
                 public Vector2 enemyOrigin;                     // The origin of the enemy
                 public Vector2 enemyPosition;                   // The position of the enemy
-                public int enemySpeed;                          // The speed of the enemy
                 public int enemyHealth;                         // The health of the enemy
                 public bool enemyAlive;                         // If the enemy is alive
                 public BoundingSphere enemyBoundingSphere;     // The bounding sphere of the enemy
@@ -123,7 +123,6 @@ namespace GradedUnit
 
                     // General
                     enemyHealth = 30;                             // Set the health of the enemy
-                    enemySpeed = 1;                               // Set the speed of the enemy
                     enemyAlive = false;                             // Set the enemy to alive
                     enemyPosition = new Vector2();                 // Set the enemy position
                     spawnTime = 0;                              // Set the spawn time
@@ -136,7 +135,10 @@ namespace GradedUnit
             bool gameOver;                                                      // If the game is over
             PlayerSprite player;                                                // Player sprite
             ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
-            EnemyStruct[] enemies = new EnemyStruct[20];                        // Array of enemies
+            EnemyStruct[] enemies = new EnemyStruct[999];                        // Array of enemies
+            int enemyIndex = 0;                                                 // The index of the enemy
+            DateTime gameStartTime = DateTime.Now;                              // The time the game started
+            DateTime nextSpawnTime = DateTime.Now;                              // The time the next enemy will spawn
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -202,6 +204,7 @@ namespace GradedUnit
                 enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
                 enemies[i].enemyAlive = false;                                                                                                  // Set the enemy to not alive
             } // End of enemy setup
+            
 
             ResetGame(); // Reset the game back to starting values
         } // End of LoadContent
@@ -260,6 +263,7 @@ namespace GradedUnit
 
                 // Arrow movement
                 for (int i = 0; i < arrows.Length; i++) // Loop through the arrows
+                {
                     if (arrows[i].arrowAlive) // If the arrow is alive
                     {
                         // Move arrow down the screen
@@ -270,75 +274,111 @@ namespace GradedUnit
                         if (arrows[i].arrowPosition.Y > _graphics.PreferredBackBufferHeight) // If the arrow is off the bottom of the screen
                             arrows[i].arrowAlive = false; // Set the arrow to not alive
                     }
+                }
+            
+                
+                
+                // Dictionary to store the vector positions of the lanes for the enemies
+                Dictionary<int, Vector2> enemyLaneCoordinates = new Dictionary<int, Vector2>
+                {
+                    { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, 1088) },
+                    { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, 1088) },
+                    { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, 1088) },
+                    { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, 1088) },
+                    { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, 1088) }
+                };
 
-                  // Enemy spawning attempt 2 - spawns one enemy at a time with a second delay
-                    for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
-                        if (!enemies[i].enemyAlive) // If the enemy is not alive
-                        {
-                            enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
-                            if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
-                            {
-                                enemies[i].enemyAlive = true; // Set the enemy to alive
-                                enemies[i].enemyHealth = 30; // Set the enemy health
+                // Spawner
+                float initialSpawnInterval = 3f; // Set the initial spawn interval
 
-                                // Set enemy position to spawn at the bottom of the screen in one of the 5 lanes
-                                if (rand.Next(0, 5) == 0) // If the random number is 0
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, 1088); // Set the enemy position to the left most lane
-                                else if (rand.Next(0, 5) == 1) // If the random number is 1
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, 1088); // Set the enemy position to the next lane to the right
-                                else if (rand.Next(0, 5) == 2) // If the random number is 2
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, 1088); // Set the enemy position to the next lane to the right
-                                else if (rand.Next(0, 5) == 3) // If the random number is 3
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, 1088); // Set the enemy position to the next lane to the right
-                                else if (rand.Next(0, 5) == 4) // If the random number is 4
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, 1088); // Set the enemy position to the right most lane
-                                enemies[i].spawnTime = 5;
-                                break; // Break the loop
-                            }
-                        }
+                if (DateTime.Now >= nextSpawnTime) // If the current time is greater than the next spawn time
+                {
+                    enemies[enemyIndex].enemyAlive = true; // Set the enemy to alive
+                    enemies[enemyIndex].enemyHealth = 30; // Set the enemy healthbar
+                    enemies[enemyIndex].enemyRectangle.X = (int)enemyLaneCoordinates[rand.Next(0, 5)].X; // Set the x position of the enemy rectangle
+                    enemies[enemyIndex].enemyRectangle.Y = (int)enemyLaneCoordinates[rand.Next(0, 5)].Y; // Set the y position of the enemy rectangle
+                    enemies[enemyIndex].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[enemyIndex].enemyRectangle.X, enemies[enemyIndex].enemyRectangle.Y, 0), enemies[enemyIndex].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
+                    enemies[enemyIndex].enemyPosition = enemyLaneCoordinates[rand.Next(0, 5)]; // Set the enemy position to a random lane
+                    enemyIndex++; // Increase the enemy index
+
+                    if (enemyIndex >= enemies.Length) // If the enemy index is greater than or equal to the length of the enemies array
+                        enemyIndex = 0; // Reset the enemy index
+
+                    var elapsedTime = DateTime.Now - gameStartTime; // Get the elapsed seconds
+
+                    float spawnInterval = initialSpawnInterval / (1 + ((float)elapsedTime.TotalSeconds / 30)); // Set the spawn interval
+                    // float random = (float)rand.NextDouble() + 0.5f; // Set the random number
+                    nextSpawnTime = DateTime.Now.AddSeconds(spawnInterval);// * random); // Set the next spawn time
+                }
+
+
+                // // Enemy spawning attempt 2 - spawns one enemy at a time with a second delay
+                // for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                //     {
+                //         if (!enemies[i].enemyAlive) // If the enemy is not alive
+                //         {
+                //             enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
+                //             if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
+                //             {
+                //                 enemies[i].enemyAlive = true; // Set the enemy to alive
+                //                 enemies[i].enemyHealth = 30; // Set the enemy health
+
+                //                 // Set enemy position to spawn at the bottom of the screen in one of the 5 lanes
+                //                 enemies[i].enemyPosition = enemyLaneCoordinates[rand.Next(0, 5)]; // Set the enemy position to a random lane
+                //                 enemies[i].spawnTime = 50;
+                //                 break; // Break the loop
+                //             }
+                //         }
+                //     }
 
                 // Enemy movement
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
-                    if (enemies[i].enemyAlive) // If the enemy is alive
                     {
-                        enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen - TODO: Change to enemy speed - currently does not work
-                        enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
-                        enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
-                        enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
-
-                        // Check if the enemy is off the top of the screen
-                        if (enemies[i].enemyPosition.Y < 2 * tileSize && enemies[i].enemyAlive) // If the enemy is off the top of the screen
+                        if (enemies[i].enemyAlive) // If the enemy is alive
                         {
-                            enemies[i].enemyAlive = false; // Set the enemy to not alive
-                            enemies[i].enemyHealth = 30; // Reset the enemy health
-                            enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
-                            player.playerHealth -= 10; // Decrease the player health
+                            enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen - TODO: Change to enemy speed - currently does not work
+                            enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
+                            enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
+                            enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
+
+                            // Check if the enemy is off the top of the screen
+                            if (enemies[i].enemyPosition.Y < 2 * tileSize && enemies[i].enemyAlive) // If the enemy is off the top of the screen
+                            {
+                                enemies[i].enemyAlive = false; // Set the enemy to not alive
+                                enemies[i].enemyHealth = 30; // Reset the enemy health
+                                enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
+                                player.playerHealth -= 10; // Decrease the player health
+                            }
                         }
                     }
 
-                    // Arrow collision with enemies
-                    for (int i = 0; i < arrows.Length; i++) // Loop through the arrows
-                        if (arrows[i].arrowAlive) // If the arrow is alive
-                            for (int j = 0; j < enemies.Length; j++) // Loop through the enemies
-                                if (enemies[j].enemyAlive) // If the enemy is alive
-                                    if (arrows[i].arrowBoundingSphere.Intersects(enemies[j].enemyBoundingSphere)) // If the arrow intersects the enemy
+                // Arrow collision with enemies
+                for (int i = 0; i < arrows.Length; i++) // Loop through the arrows
+                {
+                    if (arrows[i].arrowAlive) // If the arrow is alive
+                        for (int j = 0; j < enemies.Length; j++) // Loop through the enemies
+                        {
+                            if (enemies[j].enemyAlive) // If the enemy is alive
+                                if (arrows[i].arrowBoundingSphere.Intersects(enemies[j].enemyBoundingSphere)) // If the arrow intersects the enemy
+                                {
+                                    arrows[i].arrowAlive = false; // Set the arrow to not alive
+                                    arrows[i].arrowPosition = new Vector3(); // Reset the arrow position
+
+                                    enemies[j].enemyHealth -= 10; // Decrease the enemy health
+                                    if (enemies[j].enemyHealth <= 0) // If the enemy health is less than or equal to 0
                                     {
-                                        arrows[i].arrowAlive = false; // Set the arrow to not alive
-                                        arrows[i].arrowPosition = new Vector3(); // Reset the arrow position
-
-                                        enemies[j].enemyHealth -= 10; // Decrease the enemy health
-                                        if (enemies[j].enemyHealth <= 0) // If the enemy health is less than or equal to 0
-                                        {
-                                            enemies[j].enemyAlive = false; // Set the enemy to not alive
-                                            enemies[j].enemyHealth = 30; // Reset the enemy health
-                                            enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
-                                            player.score += 10; // Increase the player score
-                                        }
+                                        enemies[j].enemyAlive = false; // Set the enemy to not alive
+                                        enemies[j].enemyHealth = 30; // Reset the enemy health
+                                        enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
+                                        player.score += 10; // Increase the player score
                                     }
+                                }
+                        }
+                }
 
-                    // Game over
-                    if (player.playerHealth <= 0) // If the player health is less than or equal to 0
-                        gameOver = true; // Set the game to over
+                // Game over
+                if (player.playerHealth <= 0) // If the player health is less than or equal to 0
+                    gameOver = true; // Set the game to over
             }   // End of !gameOver if
             previousKeyboardState = currentKeyboardState; // Set the previous keyboard state - Must be at the end of the update method
             base.Update(gameTime); // Update the game - Stays at the end of the update method   Down
@@ -440,29 +480,16 @@ namespace GradedUnit
         } // End of Reset
 
         // Dictionary to store the vector positions of the lanes for the player
-        void LaneCoordinates()
-        {
-            Dictionary<int, Vector2> laneCoordinates = new Dictionary<int, Vector2>
-            {
-                { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, tileSize / 2) },
-                { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, tileSize / 2) },
-                { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, tileSize / 2) },
-                { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, tileSize / 2) },
-                { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, tileSize / 2) }
-            };
-        } // End of LaneCoordinates
+        
+    //     Dictionary<int, Vector2> laneCoordinates = new Dictionary<int, Vector2>
+    //     {
+    //         { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, tileSize / 2) },
+    //         { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, tileSize / 2) },
+    //         { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, tileSize / 2) },
+    //         { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, tileSize / 2) },
+    //         { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, tileSize / 2) }
+    //     };
 
-        // Dictionary to store the vector positions of the lanes for the enemies
-        void EnemyLaneCoordinates()
-        {
-            Dictionary<int, Vector2> enemyLaneCoordinates = new Dictionary<int, Vector2>
-            {
-                { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, 1088) },
-                { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, 1088) },
-                { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, 1088) },
-                { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, 1088) },
-                { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, 1088) }
-            };
-        } // End of EnemyLaneCoordinates
+    
     } // End of Game1 class
 } // End of GradedUnit Program
