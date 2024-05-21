@@ -184,11 +184,11 @@ namespace GradedUnit
             // Arrow setup
             for (int i = 0; i < arrows.Length; i++)                                                                                             // Loop through the arrows
             {
-                arrows[i].arrowTexture = Content.Load<Texture2D>("2");                                                                      // Load the arrow texture
+                arrows[i].arrowTexture = Content.Load<Texture2D>("ArrowOutline");                                                              // Load the arrow texture
                 arrows[i].arrowRectangle = new Rectangle(0, 0, arrows[i].arrowTexture.Width, arrows[i].arrowTexture.Height);                   // Set the arrow rectangle
-                arrows[i].arrowOrigin.X = (float)arrows[i].arrowRectangle.Width / 2;                                                            // Set the x origin of the arrow
-                arrows[i].arrowOrigin.Y = (float)arrows[i].arrowRectangle.Height / 2;                                                           // Set the y origin of the arrow
-                arrows[i].arrowAlive = false;                                                                                                   // Set the arrow to not alive
+                arrows[i].arrowOrigin.X = (float)arrows[i].arrowRectangle.Width / 2;                                                           // Set the x origin of the arrow
+                arrows[i].arrowOrigin.Y = (float)arrows[i].arrowRectangle.Height / 2;                                                          // Set the y origin of the arrow
+                arrows[i].arrowAlive = false;                                                                                                  // Set the arrow to not alive
             } // End of arrow setup
 
             // Enemy setup

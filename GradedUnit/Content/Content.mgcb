@@ -25,7 +25,7 @@
 /processorParam:TextureFormat=Color
 /build:0_Archer_Attack_1_000.png
 
-#begin 2.png
+#begin ArrowNoOutline.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -35,7 +35,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:2.png
+/build:ArrowNoOutline.png
+
+#begin ArrowOutline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ArrowOutline.png
 
 #begin E1.png
 /importer:TextureImporter
