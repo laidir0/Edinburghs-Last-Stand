@@ -311,7 +311,7 @@ namespace GradedUnit
                         {
                             enemies[i].enemyAlive = false; // Set the enemy to not alive
                             enemies[i].enemyHealth = 30; // Reset the enemy health
-                            enemies[i].enemyPosition = new Vector2(0, 1080); // Reset the enemy position
+                            enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
                             player.playerHealth -= 10; // Decrease the player health
                         }
                     }
@@ -331,7 +331,7 @@ namespace GradedUnit
                                         {
                                             enemies[j].enemyAlive = false; // Set the enemy to not alive
                                             enemies[j].enemyHealth = 30; // Reset the enemy health
-                                            enemies[j].enemyPosition = new Vector2(0, 1080); // Reset the enemy position
+                                            enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
                                             player.score += 10; // Increase the player score
                                         }
                                     }
@@ -437,7 +437,7 @@ namespace GradedUnit
             {
                 enemies[i].enemyAlive = false; // Set the enemy to not alive
                 enemies[i].enemyHealth = 30; // Reset the enemy health
-                enemies[i].enemyPosition = new Vector2(0, 1080); // Reset the enemy position
+                enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
             }
 
             ResetArrows(); // Reset the arrows
