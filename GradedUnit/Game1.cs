@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 // Zachary Thomson 2024
 // Graded Unit
@@ -135,7 +136,7 @@ namespace GradedUnit
             bool gameOver;                                                      // If the game is over
             PlayerSprite player;                                                // Player sprite
             ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
-            EnemyStruct[] enemies = new EnemyStruct[50];                        // Array of enemies
+            EnemyStruct[] enemies = new EnemyStruct[20];                        // Array of enemies
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -280,16 +281,16 @@ namespace GradedUnit
 
                                 // Set enemy position to spawn at the bottom of the screen in one of the 5 lanes
                                 if (rand.Next(0, 5) == 0) // If the random number is 0
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, GraphicsDevice.Viewport.Height); // Set the enemy position to the left most lane
+                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, 1088); // Set the enemy position to the left most lane
                                 else if (rand.Next(0, 5) == 1) // If the random number is 1
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, GraphicsDevice.Viewport.Height); // Set the enemy position to the next lane to the right
+                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, 1088); // Set the enemy position to the next lane to the right
                                 else if (rand.Next(0, 5) == 2) // If the random number is 2
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, GraphicsDevice.Viewport.Height); // Set the enemy position to the next lane to the right
+                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, 1088); // Set the enemy position to the next lane to the right
                                 else if (rand.Next(0, 5) == 3) // If the random number is 3
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, GraphicsDevice.Viewport.Height); // Set the enemy position to the next lane to the right
+                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, 1088); // Set the enemy position to the next lane to the right
                                 else if (rand.Next(0, 5) == 4) // If the random number is 4
-                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, GraphicsDevice.Viewport.Height); // Set the enemy position to the right most lane
-                                enemies[i].spawnTime = 3;
+                                    enemies[i].enemyPosition = new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, 1088); // Set the enemy position to the right most lane
+                                enemies[i].spawnTime = 5;
                                 break; // Break the loop
                             }
                         }
@@ -308,7 +309,6 @@ namespace GradedUnit
                         {
                             enemies[i].enemyAlive = false; // Set the enemy to not alive
                             player.playerHealth -= 10; // Decrease the player health
-                            
                         }
                     }
 
@@ -404,6 +404,30 @@ namespace GradedUnit
         } // End of Draw
 
         // User defined functions
+        // Dictionary to store the vector positions of the lanes for the player
+        void LaneCoordinates()
+        {
+            Dictionary<int, Vector2> laneCoordinates = new Dictionary<int, Vector2>
+            {
+                { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, tileSize / 2) },
+                { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, tileSize / 2) },
+                { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, tileSize / 2) },
+                { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, tileSize / 2) },
+                { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, tileSize / 2) }
+            };
+        } // End of LaneCoordinates
 
+        // Dictionary to store the vector positions of the lanes for the enemies
+        void EnemyLaneCoordinates()
+        {
+            Dictionary<int, Vector2> enemyLaneCoordinates = new Dictionary<int, Vector2>
+            {
+                { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, 1088) },
+                { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, 1088) },
+                { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, 1088) },
+                { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, 1088) },
+                { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, 1088) }
+            };
+        } // End of EnemyLaneCoordinates
     } // End of Game1 class
 } // End of GradedUnit Program
