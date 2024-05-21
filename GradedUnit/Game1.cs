@@ -179,7 +179,7 @@ namespace GradedUnit
             // SoundEffect playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                               // Load the player move sound effect TODO: Add sound effect
 
             // Load the player sprite
-            player = new PlayerSprite(Content, "0_Archer_Attack_1_000");                                                                        // Load the player sprite
+            player = new PlayerSprite(Content, "Archer1");                                                                                      // Load the player sprite
             
             // Arrow setup
             for (int i = 0; i < arrows.Length; i++)                                                                                             // Loop through the arrows
