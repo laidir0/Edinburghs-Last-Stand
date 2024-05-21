@@ -35,7 +35,8 @@ namespace GradedUnit
             }
         }
 
-        private const int tileSize = 128;                     // Size of the tiles in pixels **at current settings this gives 30 tiles across the screen, 17 down
+        private const int tileSize = 128;                     // Size of the tiles in pixels *at current settings this gives 15 tiles wide and 8.5 tall? (1920*1088 - just off bottom of screen)
+        // Background space is including tile 4 through to the 15 for the X-axis (12 tiles wide = 1536 pixels) and 8.5 tiles tall for the Y-axis (8.5 tiles tall = 1088 pixels)
         private int range = 0;                               // 0 = 1 tile, 1 = 1 range around the tile, 2 = 2 range around the tile....
         public Vector2 mouseTilePosition;                    // The mouse position in tiles
 
