@@ -307,7 +307,7 @@ namespace GradedUnit
                         enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
 
                         // Check if the enemy is off the top of the screen
-                        if (enemies[i].enemyPosition.Y < 2 * tileSize) // If the enemy is off the top of the screen
+                        if (enemies[i].enemyPosition.Y < 2 * tileSize && enemies[i].enemyAlive) // If the enemy is off the top of the screen
                         {
                             enemies[i].enemyAlive = false; // Set the enemy to not alive
                             enemies[i].enemyHealth = 30; // Reset the enemy health
@@ -340,10 +340,6 @@ namespace GradedUnit
                     if (player.playerHealth <= 0) // If the player health is less than or equal to 0
                         gameOver = true; // Set the game to over
             }   // End of !gameOver if
-            else // If the game is over -- Do I need this? think it can be removed but idk yet tbh
-            {
-                gameOver = true; // Set the game to over
-            } // End of gameOver else
             previousKeyboardState = currentKeyboardState; // Set the previous keyboard state - Must be at the end of the update method
             base.Update(gameTime); // Update the game - Stays at the end of the update method   Down
         } // End of Update method                                                                ^^
