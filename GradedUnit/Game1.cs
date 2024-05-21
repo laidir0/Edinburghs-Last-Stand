@@ -202,6 +202,8 @@ namespace GradedUnit
                 enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
                 enemies[i].enemyAlive = false;                                                                                                  // Set the enemy to not alive
             } // End of enemy setup
+
+            ResetGame(); // Reset the game back to starting values
         } // End of LoadContent
 
         KeyboardState previousKeyboardState = Keyboard.GetState();  // The previous keyboard state - Set once outside of update
@@ -308,6 +310,8 @@ namespace GradedUnit
                         if (enemies[i].enemyPosition.Y < 2 * tileSize) // If the enemy is off the top of the screen
                         {
                             enemies[i].enemyAlive = false; // Set the enemy to not alive
+                            enemies[i].enemyHealth = 30; // Reset the enemy health
+                            enemies[i].enemyPosition = new Vector2(0, 1080); // Reset the enemy position
                             player.playerHealth -= 10; // Decrease the player health
                         }
                     }
@@ -320,12 +324,14 @@ namespace GradedUnit
                                     if (arrows[i].arrowBoundingSphere.Intersects(enemies[j].enemyBoundingSphere)) // If the arrow intersects the enemy
                                     {
                                         arrows[i].arrowAlive = false; // Set the arrow to not alive
+                                        arrows[i].arrowPosition = new Vector3(); // Reset the arrow position
+
                                         enemies[j].enemyHealth -= 10; // Decrease the enemy health
                                         if (enemies[j].enemyHealth <= 0) // If the enemy health is less than or equal to 0
                                         {
                                             enemies[j].enemyAlive = false; // Set the enemy to not alive
                                             enemies[j].enemyHealth = 30; // Reset the enemy health
-                                            enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
+                                            enemies[j].enemyPosition = new Vector2(0, 1080); // Reset the enemy position
                                             player.score += 10; // Increase the player score
                                         }
                                     }
@@ -352,6 +358,9 @@ namespace GradedUnit
             {
                 _spriteBatch.Draw(gameOverBackground.backgroundTexture, gameOverBackground.backgroundRectangle, Color.White);       // Draw the game over screen
                 _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2((GraphicsDevice.Viewport.Width / 2) - 50, GraphicsDevice.Viewport.Height - 150), Color.White); // Draw the score
+                _spriteBatch.DrawString(mainFont, "Press R to restart", new Vector2((GraphicsDevice.Viewport.Width / 2) - 100, GraphicsDevice.Viewport.Height - 100), Color.White); // Draw the restart text
+                if (Keyboard.GetState().IsKeyDown(Keys.R)) // If the R key is pressed
+                    ResetGame(); // Reset the game
             }
             else            // If the game is not over
             {
@@ -405,7 +414,35 @@ namespace GradedUnit
             base.Draw(gameTime);
         } // End of Draw
 
-        // User defined functions
+        // User defined functions //
+        // Reset the arrows
+        void ResetArrows()
+        {
+            for (int i = 0; i < arrows.Length; i++) // Loop through the arrows
+            {
+                arrows[i].arrowAlive = false; // Set the arrow to not alive
+                arrows[i].arrowPosition = new Vector3(); // Reset the arrow position
+            }
+        } // End of ResetArrows
+
+        // Reset the game
+        void ResetGame()
+        {
+            player.playerHealth = 100; // Reset the player health
+            player.playerPosition = new Vector2(); // Reset the player position
+            player.score = 0; // Reset the player score
+            gameOver = false; // Set the game to not over
+
+            for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+            {
+                enemies[i].enemyAlive = false; // Set the enemy to not alive
+                enemies[i].enemyHealth = 30; // Reset the enemy health
+                enemies[i].enemyPosition = new Vector2(0, 1080); // Reset the enemy position
+            }
+
+            ResetArrows(); // Reset the arrows
+        } // End of Reset
+
         // Dictionary to store the vector positions of the lanes for the player
         void LaneCoordinates()
         {
