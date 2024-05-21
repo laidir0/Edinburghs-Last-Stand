@@ -324,6 +324,8 @@ namespace GradedUnit
                                         if (enemies[j].enemyHealth <= 0) // If the enemy health is less than or equal to 0
                                         {
                                             enemies[j].enemyAlive = false; // Set the enemy to not alive
+                                            enemies[j].enemyHealth = 30; // Reset the enemy health
+                                            enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
                                             player.score += 10; // Increase the player score
                                         }
                                     }
