@@ -145,7 +145,6 @@ namespace GradedUnit
             // A timer for the game equal to gametime
             
 
-
             public Game1()                                      // Machine things - Set the w   indow size, fullscreen, mouse visibility and content directory
             {
                 _graphics = new GraphicsDeviceManager(this)     // Set the window size
@@ -276,8 +275,6 @@ namespace GradedUnit
                     }
                 }
             
-                
-                
                 // Dictionary to store the vector positions of the lanes for the enemies
                 Dictionary<int, Vector2> enemyLaneCoordinates = new Dictionary<int, Vector2>
                 {
@@ -310,26 +307,6 @@ namespace GradedUnit
                     // float random = (float)rand.NextDouble() + 0.5f; // Set the random number
                     nextSpawnTime = DateTime.Now.AddSeconds(spawnInterval);// * random); // Set the next spawn time
                 }
-
-
-                // // Enemy spawning attempt 2 - spawns one enemy at a time with a second delay
-                // for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
-                //     {
-                //         if (!enemies[i].enemyAlive) // If the enemy is not alive
-                //         {
-                //             enemies[i].spawnTime -= (float)gameTime.ElapsedGameTime.TotalSeconds; // Decrease the spawn time
-                //             if (enemies[i].spawnTime <= 0) // If the spawn time is less than or equal to 0
-                //             {
-                //                 enemies[i].enemyAlive = true; // Set the enemy to alive
-                //                 enemies[i].enemyHealth = 30; // Set the enemy health
-
-                //                 // Set enemy position to spawn at the bottom of the screen in one of the 5 lanes
-                //                 enemies[i].enemyPosition = enemyLaneCoordinates[rand.Next(0, 5)]; // Set the enemy position to a random lane
-                //                 enemies[i].spawnTime = 50;
-                //                 break; // Break the loop
-                //             }
-                //         }
-                //     }
 
                 // Enemy movement
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
@@ -409,7 +386,6 @@ namespace GradedUnit
                 _spriteBatch.Draw(tileTexture, new Rectangle((14 * tileSize), (2 * tileSize), tileSize, GraphicsDevice.Viewport.Height), Color.DarkGray); // Draw the dark grey box for the lane
                 // ^^Temp stuff for background
 
-
                 _spriteBatch.Draw(tileTexture, new Rectangle(0, 0, tileSize * 3, GraphicsDevice.Viewport.Height), Color.Black);    // Draw the black box for under text
 
                 // If the mouse has the same x axis as one of the lanes highlight the tile the mouse is over
@@ -431,7 +407,6 @@ namespace GradedUnit
                 _spriteBatch.Draw(tileTexture, new Rectangle(65, GraphicsDevice.Viewport.Height - 75, 184, 24), Color.White); // Draw the player health bar outline
                 _spriteBatch.Draw(tileTexture, new Rectangle(67, GraphicsDevice.Viewport.Height - 73, player.playerHealth * 2, 20), Color.Red); // Draw the player health bar
                 // ^^That is quite lazy, will need to change healthbar to be a set size and diminish based on a percentage of health lost
-
 
                 /// ENEMIES ///
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
@@ -478,18 +453,5 @@ namespace GradedUnit
 
             ResetArrows(); // Reset the arrows
         } // End of Reset
-
-        // Dictionary to store the vector positions of the lanes for the player
-        
-    //     Dictionary<int, Vector2> laneCoordinates = new Dictionary<int, Vector2>
-    //     {
-    //         { 0, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 10, tileSize / 2) },
-    //         { 1, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 8, tileSize / 2) },
-    //         { 2, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 6, tileSize / 2) },
-    //         { 3, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 4, tileSize / 2) },
-    //         { 4, new Vector2(GraphicsDevice.Viewport.Width - tileSize * 2, tileSize / 2) }
-    //     };
-
-    
     } // End of Game1 class
 } // End of GradedUnit Program
