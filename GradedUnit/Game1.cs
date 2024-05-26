@@ -407,6 +407,8 @@ namespace GradedUnit
                 // Draw on screen text
                 _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2(10, 10), Color.White);                  // Draw the score
                 _spriteBatch.DrawString(mainFont, "Enemies Killed: " + enemiesKilled, new Vector2(10, 40), Color.White);         // Draws number of enemies killed
+                _spriteBatch.DrawString(mainFont, "Movement - A & D", new Vector2(10,100), Color.White);         // Draws player instructions
+                _spriteBatch.DrawString(mainFont, "Firing - Spacebar", new Vector2(10, 130), Color.White);         // Draws player instructions
                 _spriteBatch.DrawString(mainFont, "Objective: Survive", new Vector2(10, GraphicsDevice.Viewport.Height - 40), Color.White); // Draw the wave number.... when possible TODO: Add enemies remaining
                 _spriteBatch.DrawString(mainFont, "HP: ", new Vector2(10, GraphicsDevice.Viewport.Height - 80), Color.White); // Draw the player health
                 _spriteBatch.Draw(tileTexture, new Rectangle(65, GraphicsDevice.Viewport.Height - 75, 184, 24), Color.White); // Draw the player health bar outline
