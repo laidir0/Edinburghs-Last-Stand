@@ -73,7 +73,7 @@
 /processorParam:TextureFormat=Color
 /build:castleBackground.png
 
-#begin E1.png
+#begin enemySoldier.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,31 +83,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:E1.png
-
-#begin E2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:E2.png
-
-#begin E3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:E3.png
+/build:enemySoldier.png
 
 #begin gameover.jpg
 /importer:TextureImporter
@@ -121,11 +97,11 @@
 /processorParam:TextureFormat=Color
 /build:gameover.jpg
 
-#begin Production Element Title Transition Blast Short Hit 07.wav
+#begin hitSound.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Production Element Title Transition Blast Short Hit 07.wav
+/build:hitSound.wav
 
 #begin quartz4.png
 /importer:TextureImporter

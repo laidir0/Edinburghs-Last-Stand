@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -36,7 +37,7 @@ namespace GradedUnit
                 else _lane = value;
             }
         }
-
+        public int enemiesKilled = 0; // How many enemies have been killed
         private const int tileSize = 128;                     // Size of the tiles in pixels *at current settings this gives 15 tiles wide and 8.5 tall? (1920*1088 - just off bottom of screen)
         // Background space is including tile 4 through to the 15 for the X-axis (12 tiles wide = 1536 pixels) and 8.5 tiles tall for the Y-axis (8.5 tiles tall = 1088 pixels)
         private int range = 0;                               // 0 = 1 tile, 1 = 1 range around the tile, 2 = 2 range around the tile....
@@ -139,6 +140,7 @@ namespace GradedUnit
             int enemyIndex = 0;                                                 // The index of the enemy
             DateTime gameStartTime = DateTime.Now;                              // The time the game started
             DateTime nextSpawnTime = DateTime.Now;                              // The time the next enemy will spawn
+            SoundEffect hitSound;                                               // Any sounds being used
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -154,7 +156,7 @@ namespace GradedUnit
                     IsFullScreen = true
                 };
                 Content.RootDirectory = "Content";              // Set the content directory
-                IsMouseVisible = true;                          // Show the mouse
+                IsMouseVisible = false;                          // Show the mouse
             } // End of Game1 constructor
 
             protected override void Initialize()    // Initialize the game
@@ -180,6 +182,7 @@ namespace GradedUnit
 
             // Load sounds
             // SoundEffect playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                               // Load the player move sound effect TODO: Add sound effect
+            hitSound = Content.Load<SoundEffect>("hitSound");
 
             // Load the player sprite
             player = new PlayerSprite(Content, "Archer1");                                                                                      // Load the player sprite
@@ -197,7 +200,7 @@ namespace GradedUnit
             // Enemy setup
             for (int i = 0; i < enemies.Length; i++)                                                                                           // Loop through the enemies
             {
-                enemies[i].enemyTexture = Content.Load<Texture2D>("E1");                                                                      // Load the enemy texture
+                enemies[i].enemyTexture = Content.Load<Texture2D>("enemySoldier");                                                                      // Load the enemy texture
                 enemies[i].enemyRectangle = new Rectangle(0, 0, enemies[i].enemyTexture.Width, enemies[i].enemyTexture.Height);                // Set the enemy rectangle
                 enemies[i].enemyOrigin.X = (float)enemies[i].enemyRectangle.Width / 2;                                                          // Set the x origin of the enemy
                 enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
@@ -325,6 +328,7 @@ namespace GradedUnit
                                 enemies[i].enemyHealth = 30; // Reset the enemy health
                                 enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
                                 player.playerHealth -= 10; // Decrease the player health
+                                hitSound.Play(); // Plays the death sound
                             }
                         }
                     }
@@ -348,6 +352,7 @@ namespace GradedUnit
                                         enemies[j].enemyHealth = 30; // Reset the enemy health
                                         enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
                                         player.score += 10; // Increase the player score
+                                        enemiesKilled += 1; // Increase amount of enemies killed
                                     }
                                 }
                         }
@@ -389,20 +394,20 @@ namespace GradedUnit
                 _spriteBatch.Draw(tileTexture, new Rectangle(0, 0, tileSize * 3, GraphicsDevice.Viewport.Height), Color.Black);    // Draw the black box for under text
 
                 // If the mouse has the same x axis as one of the lanes highlight the tile the mouse is over
-                if (mouseTilePosition.X > 3 && mouseTilePosition.X < 14 && mouseTilePosition.Y > 1) // If the mouse is over the lanes
-                    _spriteBatch.Draw(tileTexture, new Rectangle((int)mouseTilePosition.X * tileSize, (int)mouseTilePosition.Y * tileSize, tileSize, tileSize), Color.Red); // Draw the tile in red so it is clear to the player
+                //if (mouseTilePosition.X > 3 && mouseTilePosition.X < 14 && mouseTilePosition.Y > 1) // If the mouse is over the lanes
+                    //_spriteBatch.Draw(tileTexture, new Rectangle((int)mouseTilePosition.X * tileSize, (int)mouseTilePosition.Y * tileSize, tileSize, tileSize), Color.Red); // Draw the tile in red so it is clear to the player
                     
                 // Draw the tiles
-                for (int x = 0; x < GraphicsDevice.Viewport.Width; x += tileSize)                                                   // Loop through the screen width
-                    _spriteBatch.Draw(tileTexture, new Rectangle(x, 0, 1, GraphicsDevice.Viewport.Height), Color.Black);            // Draw a vertical line
+                //for (int x = 0; x < GraphicsDevice.Viewport.Width; x += tileSize)                                                   // Loop through the screen width
+                    //_spriteBatch.Draw(tileTexture, new Rectangle(x, 0, 1, GraphicsDevice.Viewport.Height), Color.Black);            // Draw a vertical line
 
-                for (int y = 0; y < GraphicsDevice.Viewport.Height; y += tileSize)                                                  // Loop through the screen height
-                    _spriteBatch.Draw(tileTexture, new Rectangle(0, y, GraphicsDevice.Viewport.Width, 1), Color.Black);             // Draw a horizontal line
+                //for (int y = 0; y < GraphicsDevice.Viewport.Height; y += tileSize)                                                  // Loop through the screen height
+                    //_spriteBatch.Draw(tileTexture, new Rectangle(0, y, GraphicsDevice.Viewport.Width, 1), Color.Black);             // Draw a horizontal line
 
                 // Draw on screen text
                 _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2(10, 10), Color.White);                  // Draw the score
-                _spriteBatch.DrawString(mainFont, "Enemies: " + 0, new Vector2(10, 40), Color.White);                           // Draw the enemies remaining.... when possible TODO: Add enemies remaining
-                _spriteBatch.DrawString(mainFont, "Wave: " + 1, new Vector2(10, GraphicsDevice.Viewport.Height - 40), Color.White); // Draw the wave number.... when possible TODO: Add enemies remaining
+                _spriteBatch.DrawString(mainFont, "Enemies Killed: " + enemiesKilled, new Vector2(10, 40), Color.White);         // Draws number of enemies killed
+                _spriteBatch.DrawString(mainFont, "Objective: Survive", new Vector2(10, GraphicsDevice.Viewport.Height - 40), Color.White); // Draw the wave number.... when possible TODO: Add enemies remaining
                 _spriteBatch.DrawString(mainFont, "HP: ", new Vector2(10, GraphicsDevice.Viewport.Height - 80), Color.White); // Draw the player health
                 _spriteBatch.Draw(tileTexture, new Rectangle(65, GraphicsDevice.Viewport.Height - 75, 184, 24), Color.White); // Draw the player health bar outline
                 _spriteBatch.Draw(tileTexture, new Rectangle(67, GraphicsDevice.Viewport.Height - 73, player.playerHealth * 2, 20), Color.Red); // Draw the player health bar
