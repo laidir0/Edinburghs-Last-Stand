@@ -103,6 +103,12 @@
 /processorParam:Quality=Best
 /build:hitSound.wav
 
+#begin playerMove.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:playerMove.wav
+
 #begin quartz4.png
 /importer:TextureImporter
 /processor:FontTextureProcessor
