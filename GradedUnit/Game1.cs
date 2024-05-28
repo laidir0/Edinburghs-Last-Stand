@@ -302,7 +302,7 @@ namespace GradedUnit
                 };
 
                 // Spawner
-                float initialSpawnInterval = 1f; // Set the initial spawn interval
+                float initialSpawnInterval = 2f; // Set the initial spawn interval
 
                 if (DateTime.Now >= nextSpawnTime) // If the current time is greater than the next spawn time
                 {
