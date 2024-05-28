@@ -61,6 +61,12 @@
 /processorParam:TextureFormat=Color
 /build:ArrowOutline.png
 
+#begin backgroundMusic.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:backgroundMusic.wav
+
 #begin castleBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -114,6 +120,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:hitSound.wav
+
+#begin mainMenu.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:mainMenu.png
 
 #begin playerFire.wav
 /importer:WavImporter

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -66,108 +67,109 @@ namespace GradedUnit
         // 2D structure for the player sprite
         struct PlayerSprite
         {
-                public Texture2D playerTexture;                 // The texture for the player
-                public Rectangle playerRectangle;               // The rectangle for the player
-                public Vector2 playerOrigin;                    // The origin of the player
-                public Vector2 playerPosition;                  // The position of the player
-                public int playerHealth;                        // The health of the player
-                public bool playerAlive;                        // If the player is alive
-                public int score;                               // The score of the player
+            public Texture2D playerTexture;                 // The texture for the player
+            public Rectangle playerRectangle;               // The rectangle for the player
+            public Vector2 playerOrigin;                    // The origin of the player
+            public Vector2 playerPosition;                  // The position of the player
+            public int playerHealth;                        // The health of the player
+            public bool playerAlive;                        // If the player is alive
+            public int score;                               // The score of the player
 
-                // Constructor for the player
-                public PlayerSprite(ContentManager content, string filename)
-                {
-                    playerTexture = content.Load<Texture2D>(filename);                                      // Load the texture
-                    playerRectangle = new Rectangle(0, 0, playerTexture.Width, playerTexture.Height);       // Set the rectangle
-                    playerOrigin.X = (float)playerRectangle.Width / 2;                                      // Set the x origin of the player
-                    playerOrigin.Y = (float)playerRectangle.Height / 2;                                     // Set the y origin of the player
+            // Constructor for the player
+            public PlayerSprite(ContentManager content, string filename)
+            {
+                playerTexture = content.Load<Texture2D>(filename);                                      // Load the texture
+                playerRectangle = new Rectangle(0, 0, playerTexture.Width, playerTexture.Height);       // Set the rectangle
+                playerOrigin.X = (float)playerRectangle.Width / 2;                                      // Set the x origin of the player
+                playerOrigin.Y = (float)playerRectangle.Height / 2;                                     // Set the y origin of the player
 
-                    // General
-                    playerHealth = 100;                             // Set the health of the player
-                    score = 0;                                      // Set the score of the player
-                    playerAlive = true;                             // Set the player to alive
-                    playerPosition = new Vector2();                 // Set the player position
-                }
+                // General
+                playerHealth = 100;                             // Set the health of the player
+                score = 0;                                      // Set the score of the player
+                playerAlive = true;                             // Set the player to alive
+                playerPosition = new Vector2();                 // Set the player position
             }
+        }
 
-            // Structure for the players basic attack - Arrows
-            struct ArrowStruct
+        // Structure for the players basic attack - Arrows
+        struct ArrowStruct
+        {
+            public Texture2D arrowTexture;                  // The texture for the arrow
+            public Rectangle arrowRectangle;                // The rectangle for the arrow
+            public Vector3 arrowPosition;                   // The position of the arrow
+            public Vector2 arrowOrigin;                      // The origin of the arrow
+            public BoundingSphere arrowBoundingSphere;      // The bounding sphere of the arrow
+            public bool arrowAlive;                         // If the arrow is alive
+        }
+
+        // Structure for the enemies
+        struct EnemyStruct
+        {
+            public Texture2D enemyTexture;                  // The texture for the enemy
+            public Rectangle enemyRectangle;                // The rectangle for the enemy
+            public Vector2 enemyOrigin;                     // The origin of the enemy
+            public Vector2 enemyPosition;                   // The position of the enemy
+            public int enemyHealth;                         // The health of the enemy
+            public bool enemyAlive;                         // If the enemy is alive
+            public BoundingSphere enemyBoundingSphere;     // The bounding sphere of the enemy
+            public float spawnTime;                           // The time the last enemy was spawned
+
+            // Constructor for the enemy
+            public EnemyStruct(ContentManager content, string filename)
             {
-                public Texture2D arrowTexture;                  // The texture for the arrow
-                public Rectangle arrowRectangle;                // The rectangle for the arrow
-                public Vector3 arrowPosition;                   // The position of the arrow
-                public Vector2 arrowOrigin;                      // The origin of the arrow
-                public BoundingSphere arrowBoundingSphere;      // The bounding sphere of the arrow
-                public bool arrowAlive;                         // If the arrow is alive
+                enemyTexture = content.Load<Texture2D>(filename);                                      // Load the texture
+                enemyRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);         // Set the rectangle
+                enemyOrigin.X = (float)enemyRectangle.Width / 2;                                        // Set the x origin of the enemy
+                enemyOrigin.Y = (float)enemyRectangle.Height / 2;                                       // Set the y origin of the enemy
+                enemyBoundingSphere = new BoundingSphere();                                             // Set the bounding sphere of the enemy
+
+                // General
+                enemyHealth = 30;                             // Set the health of the enemy
+                enemyAlive = false;                             // Set the enemy to alive
+                enemyPosition = new Vector2();                 // Set the enemy position
+                spawnTime = 0;                              // Set the spawn time
             }
+        }
 
-            // Structure for the enemies
-            struct EnemyStruct
+        // VARIABLES
+        BackgroundStruct gameBackground, gameOverBackground, mainMenuBackground;                // Background and game over screen
+        SpriteFont mainFont;                                                // Main font
+        bool gameOver, mainMenu;                                            // If the game is over or on main menu
+        PlayerSprite player;                                                // Player sprite
+        ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
+        EnemyStruct[] enemies = new EnemyStruct[999];                        // Array of enemies
+        int enemyIndex = 0;                                                 // The index of the enemy
+        int step = 0;
+        DateTime gameStartTime = DateTime.Now;                              // The time the game started
+        DateTime nextSpawnTime = DateTime.Now;                              // The time the next enemy will spawn
+        SoundEffect hitSound, playerMoveSFX, playerFireSFX, enemyDeathSFX, enemyWalkSFX;  // Any sounds being used
+        Song BGM;
+
+        // Assuming will need later, there for now
+        Random rand = new Random();                                         // Random number generator
+                                                                            // A timer for the game equal to gametime
+
+
+        public Game1()                                      // Machine things - Set the w   indow size, fullscreen, mouse visibility and content directory
+        {
+            _graphics = new GraphicsDeviceManager(this)     // Set the window size
             {
-                public Texture2D enemyTexture;                  // The texture for the enemy
-                public Rectangle enemyRectangle;                // The rectangle for the enemy
-                public Vector2 enemyOrigin;                     // The origin of the enemy
-                public Vector2 enemyPosition;                   // The position of the enemy
-                public int enemyHealth;                         // The health of the enemy
-                public bool enemyAlive;                         // If the enemy is alive
-                public BoundingSphere enemyBoundingSphere;     // The bounding sphere of the enemy
-                public float spawnTime;                           // The time the last enemy was spawned
+                PreferredBackBufferWidth = 1920,            // 1920x1080
+                PreferredBackBufferHeight = 1080,
+                IsFullScreen = true
+            };
+            Content.RootDirectory = "Content";              // Set the content directory
+            IsMouseVisible = false;                          // Show the mouse
+        } // End of Game1 constructor
 
-                // Constructor for the enemy
-                public EnemyStruct(ContentManager content, string filename)
-                {
-                    enemyTexture = content.Load<Texture2D>(filename);                                      // Load the texture
-                    enemyRectangle = new Rectangle(0, 0, enemyTexture.Width, enemyTexture.Height);         // Set the rectangle
-                    enemyOrigin.X = (float)enemyRectangle.Width / 2;                                        // Set the x origin of the enemy
-                    enemyOrigin.Y = (float)enemyRectangle.Height / 2;                                       // Set the y origin of the enemy
-                    enemyBoundingSphere = new BoundingSphere();                                             // Set the bounding sphere of the enemy
+        protected override void Initialize()    // Initialize the game
+        {
+            // Create a texture for the tiles
+            tileTexture = new Texture2D(GraphicsDevice, 1, 1);  // 1x1 pixel
+            tileTexture.SetData(new Color[] { Color.White });   // White pixel
 
-                    // General
-                    enemyHealth = 30;                             // Set the health of the enemy
-                    enemyAlive = false;                             // Set the enemy to alive
-                    enemyPosition = new Vector2();                 // Set the enemy position
-                    spawnTime = 0;                              // Set the spawn time
-                }
-            }
-
-            // VARIABLES
-            BackgroundStruct gameBackground, gameOverBackground;                // Background and game over screen
-            SpriteFont mainFont;                                                // Main font
-            bool gameOver;                                                      // If the game is over
-            PlayerSprite player;                                                // Player sprite
-            ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
-            EnemyStruct[] enemies = new EnemyStruct[999];                        // Array of enemies
-            int enemyIndex = 0;                                                 // The index of the enemy
-            int step = 0;
-            DateTime gameStartTime = DateTime.Now;                              // The time the game started
-            DateTime nextSpawnTime = DateTime.Now;                              // The time the next enemy will spawn
-            SoundEffect hitSound, playerMoveSFX, playerFireSFX, enemyDeathSFX, enemyWalkSFX;  // Any sounds being used
-
-            // Assuming will need later, there for now
-            Random rand = new Random();                                         // Random number generator
-            // A timer for the game equal to gametime
-            
-
-            public Game1()                                      // Machine things - Set the w   indow size, fullscreen, mouse visibility and content directory
-            {
-                _graphics = new GraphicsDeviceManager(this)     // Set the window size
-                {
-                    PreferredBackBufferWidth = 1920,            // 1920x1080
-                    PreferredBackBufferHeight = 1080,
-                    IsFullScreen = true
-                };
-                Content.RootDirectory = "Content";              // Set the content directory
-                IsMouseVisible = false;                          // Show the mouse
-            } // End of Game1 constructor
-
-            protected override void Initialize()    // Initialize the game
-            {
-                // Create a texture for the tiles
-                tileTexture = new Texture2D(GraphicsDevice, 1, 1);  // 1x1 pixel
-                tileTexture.SetData(new Color[] { Color.White });   // White pixel
-
-                base.Initialize();
-            } // End of Initialize
+            base.Initialize();
+        } // End of Initialize
 
         protected override void LoadContent()   // Load the content for the game
         {
@@ -179,7 +181,8 @@ namespace GradedUnit
 
             // Load background textures
             gameBackground = new BackgroundStruct(Content, "castleBackground", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);     // Load the game background -  changed background image
-            gameOverBackground = new BackgroundStruct(Content, "gameover", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);      // Load the game over background
+            gameOverBackground = new BackgroundStruct(Content, "gameover", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            mainMenuBackground = new BackgroundStruct(Content, "mainMenu", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);          // Load the main menu screen
 
             // Load sounds
             hitSound = Content.Load<SoundEffect>("hitSound");
@@ -187,10 +190,11 @@ namespace GradedUnit
             playerFireSFX = Content.Load<SoundEffect>("playerFire");                                                                            // player fire arrow soundeffect
             enemyDeathSFX = Content.Load<SoundEffect>("enemyDeath");                                                                            // enemy dying soundeffect
             enemyWalkSFX = Content.Load<SoundEffect>("enemyWalk");                                                                              // enemy walking soundeffect
+            BGM = Content.Load<Song>("backgroundMusic");                                                                                        // backgorund music
 
             // Load the player sprite
             player = new PlayerSprite(Content, "Archer1");                                                                                      // Load the player sprite
-            
+
             // Arrow setup
             for (int i = 0; i < arrows.Length; i++)                                                                                             // Loop through the arrows
             {
@@ -210,7 +214,7 @@ namespace GradedUnit
                 enemies[i].enemyOrigin.Y = (float)enemies[i].enemyRectangle.Height / 2;                                                         // Set the y origin of the enemy
                 enemies[i].enemyAlive = false;                                                                                                  // Set the enemy to not alive
             } // End of enemy setup
-            
+
 
             ResetGame(); // Reset the game back to starting values
         } // End of LoadContent
@@ -222,10 +226,14 @@ namespace GradedUnit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit(); // Exit the game if the back button is pressed or the escape key is pressed
 
+            if (MediaPlayer.State != MediaState.Playing) // begins playback of music
+                MediaPlayer.Play(BGM);
+
+
             // Get keyboard and mouse state
             KeyboardState currentKeyboardState = Keyboard.GetState();   // Get the current keyboard state - set every frame
-            // MouseState currentMouseState = Mouse.GetState();            // Get the current mouse state - set every frame
-
+                                                                        // MouseState currentMouseState = Mouse.GetState();            // Get the current mouse state - set every frame
+            // mainMenu = true;
             if (!gameOver)
             {
                 // Get the mouse position in tiles
@@ -282,7 +290,7 @@ namespace GradedUnit
                             arrows[i].arrowAlive = false; // Set the arrow to not alive
                     }
                 }
-            
+
                 // Dictionary to store the vector positions of the lanes for the enemies
                 Dictionary<int, Vector2> enemyLaneCoordinates = new Dictionary<int, Vector2>
                 {
@@ -319,32 +327,32 @@ namespace GradedUnit
 
                 // Enemy movement
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
+                {
+                    if (enemies[i].enemyAlive) // If the enemy is alive
+
                     {
-                        if (enemies[i].enemyAlive) // If the enemy is alive
-                        
-                        {
-                            enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen - TODO: Change to enemy speed - currently does not work
-                            enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
-                            enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
-                            enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
-                            step++;
+                        enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen - TODO: Change to enemy speed - currently does not work
+                        enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
+                        enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
+                        enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
+                        step++;
                         if (step == 60)
                         {
                             enemyWalkSFX.Play();
-                            step -= 61;
+                            step -= 101;
                         }
-                        
+
                         // Check if the enemy is off the top of the screen
                         if (enemies[i].enemyPosition.Y < 2 * tileSize && enemies[i].enemyAlive) // If the enemy is off the top of the screen
-                            {
-                                enemies[i].enemyAlive = false; // Set the enemy to not alive
-                                enemies[i].enemyHealth = 30; // Reset the enemy health
-                                enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
-                                player.playerHealth -= 10; // Decrease the player health
-                                hitSound.Play(); // Plays the death sound
-                            }
+                        {
+                            enemies[i].enemyAlive = false; // Set the enemy to not alive
+                            enemies[i].enemyHealth = 30; // Reset the enemy health
+                            enemies[i].enemyPosition = new Vector2(); // Reset the enemy position
+                            player.playerHealth -= 10; // Decrease the player health
+                            hitSound.Play(); // Plays the death sound
                         }
                     }
+                }
 
                 // Arrow collision with enemies
                 for (int i = 0; i < arrows.Length; i++) // Loop through the arrows
@@ -386,6 +394,16 @@ namespace GradedUnit
 
             _spriteBatch.Begin();
 
+            if(mainMenu == true) 
+            {
+                _spriteBatch.Draw(mainMenuBackground.backgroundTexture, mainMenuBackground.backgroundRectangle, Color.White); // should draw main menu screen
+                if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                {
+                    mainMenu = false;
+                }
+                ResetGame();
+            }
+
             if (gameOver)   // If the game is over
             {
                 _spriteBatch.Draw(gameOverBackground.backgroundTexture, gameOverBackground.backgroundRectangle, Color.White);       // Draw the game over screen
@@ -409,19 +427,19 @@ namespace GradedUnit
 
                 // If the mouse has the same x axis as one of the lanes highlight the tile the mouse is over
                 //if (mouseTilePosition.X > 3 && mouseTilePosition.X < 14 && mouseTilePosition.Y > 1) // If the mouse is over the lanes
-                    //_spriteBatch.Draw(tileTexture, new Rectangle((int)mouseTilePosition.X * tileSize, (int)mouseTilePosition.Y * tileSize, tileSize, tileSize), Color.Red); // Draw the tile in red so it is clear to the player
-                    
+                //_spriteBatch.Draw(tileTexture, new Rectangle((int)mouseTilePosition.X * tileSize, (int)mouseTilePosition.Y * tileSize, tileSize, tileSize), Color.Red); // Draw the tile in red so it is clear to the player
+
                 // Draw the tiles
                 //for (int x = 0; x < GraphicsDevice.Viewport.Width; x += tileSize)                                                   // Loop through the screen width
-                    //_spriteBatch.Draw(tileTexture, new Rectangle(x, 0, 1, GraphicsDevice.Viewport.Height), Color.Black);            // Draw a vertical line
+                //_spriteBatch.Draw(tileTexture, new Rectangle(x, 0, 1, GraphicsDevice.Viewport.Height), Color.Black);            // Draw a vertical line
 
                 //for (int y = 0; y < GraphicsDevice.Viewport.Height; y += tileSize)                                                  // Loop through the screen height
-                    //_spriteBatch.Draw(tileTexture, new Rectangle(0, y, GraphicsDevice.Viewport.Width, 1), Color.Black);             // Draw a horizontal line
+                //_spriteBatch.Draw(tileTexture, new Rectangle(0, y, GraphicsDevice.Viewport.Width, 1), Color.Black);             // Draw a horizontal line
 
                 // Draw on screen text
                 _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2(10, 10), Color.White);                  // Draw the score
                 _spriteBatch.DrawString(mainFont, "Enemies Killed: " + enemiesKilled, new Vector2(10, 40), Color.White);         // Draws number of enemies killed
-                _spriteBatch.DrawString(mainFont, "Movement - A & D", new Vector2(10,100), Color.White);         // Draws player instructions
+                _spriteBatch.DrawString(mainFont, "Movement - A & D", new Vector2(10, 100), Color.White);         // Draws player instructions
                 _spriteBatch.DrawString(mainFont, "Firing - Spacebar", new Vector2(10, 130), Color.White);         // Draws player instructions
                 _spriteBatch.DrawString(mainFont, "Objective: Survive", new Vector2(10, GraphicsDevice.Viewport.Height - 40), Color.White); // Draw the wave number.... when possible TODO: Add enemies remaining
                 _spriteBatch.DrawString(mainFont, "HP: ", new Vector2(10, GraphicsDevice.Viewport.Height - 80), Color.White); // Draw the player health
