@@ -73,6 +73,12 @@
 /processorParam:TextureFormat=Color
 /build:castleBackground.png
 
+#begin enemyDeath.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:enemyDeath.wav
+
 #begin enemySoldier.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -102,6 +108,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:hitSound.wav
+
+#begin playerFire.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:playerFire.wav
 
 #begin playerMove.wav
 /importer:WavImporter

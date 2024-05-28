@@ -140,7 +140,7 @@ namespace GradedUnit
             int enemyIndex = 0;                                                 // The index of the enemy
             DateTime gameStartTime = DateTime.Now;                              // The time the game started
             DateTime nextSpawnTime = DateTime.Now;                              // The time the next enemy will spawn
-            SoundEffect hitSound, playerMoveSFX;                                               // Any sounds being used
+            SoundEffect hitSound, playerMoveSFX, playerFireSFX, enemyDeathSFX;                                               // Any sounds being used
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -177,13 +177,14 @@ namespace GradedUnit
             mainFont = Content.Load<SpriteFont>("quartz4");                                                                                     // Load the main font
 
             // Load background textures
-            gameBackground = new BackgroundStruct(Content, "castleBackground", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);     // Load the game background TODO: Add background texture  changed background image
+            gameBackground = new BackgroundStruct(Content, "castleBackground", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);     // Load the game background -  changed background image
             gameOverBackground = new BackgroundStruct(Content, "gameover", GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);      // Load the game over background
 
             // Load sounds
-            //SoundEffect playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                               // Load the player move sound effect TODO: added SFX
             hitSound = Content.Load<SoundEffect>("hitSound");
-            playerMoveSFX = Content.Load<SoundEffect>("playerMove");
+            playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                                            // player movement soundeffect added
+            playerFireSFX = Content.Load<SoundEffect>("playerFire");
+            enemyDeathSFX = Content.Load<SoundEffect>("enemyDeath");
 
             // Load the player sprite
             player = new PlayerSprite(Content, "Archer1");                                                                                      // Load the player sprite
@@ -232,12 +233,12 @@ namespace GradedUnit
                 if (currentKeyboardState.IsKeyDown(Keys.Left) && !previousKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A) && !previousKeyboardState.IsKeyDown(Keys.A))
                 {
                     Game1.Lane--; // Move to the left lane
-                    playerMoveSFX.Play();   // Play the player move sound effect TODO: Add sound effect
+                    playerMoveSFX.Play();   // Play the player move sound effect - DONE
                 }
                 else if (currentKeyboardState.IsKeyDown(Keys.Right) && !previousKeyboardState.IsKeyDown(Keys.Right) || currentKeyboardState.IsKeyDown(Keys.D) && !previousKeyboardState.IsKeyDown(Keys.D))
                 {
                     Game1.Lane++; // Move to the right lane
-                    playerMoveSFX.Play();   // Play the player move sound effect TODO: Add sound effect
+                    playerMoveSFX.Play();   // Play the player move sound effect - DONE
                 }
 
                 // Set player positions based on lane - TODO: Move to own function, maybe properly define lanes...
@@ -260,6 +261,7 @@ namespace GradedUnit
                         {
                             arrows[i].arrowAlive = true; // Set the arrow to alive
                             arrows[i].arrowPosition = new Vector3(player.playerPosition.X, player.playerPosition.Y, 0); // Set the arrow position
+                            playerFireSFX.Play();
                             break; // Break the loop
                         }
                 }
@@ -354,6 +356,7 @@ namespace GradedUnit
                                         enemies[j].enemyPosition = new Vector2(); // Reset the enemy position
                                         player.score += 10; // Increase the player score
                                         enemiesKilled += 1; // Increase amount of enemies killed
+                                        enemyDeathSFX.Play(); // plays enemy death sound effect
                                     }
                                 }
                         }
