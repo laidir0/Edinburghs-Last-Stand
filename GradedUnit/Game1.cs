@@ -226,9 +226,8 @@ namespace GradedUnit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit(); // Exit the game if the back button is pressed or the escape key is pressed
 
-            if (MediaPlayer.State != MediaState.Playing) // begins playback of music
+            if (MediaPlayer.State != MediaState.Playing)
                 MediaPlayer.Play(BGM);
-
 
             // Get keyboard and mouse state
             KeyboardState currentKeyboardState = Keyboard.GetState();   // Get the current keyboard state - set every frame
@@ -302,7 +301,7 @@ namespace GradedUnit
                 };
 
                 // Spawner
-                float initialSpawnInterval = 1f; // Set the initial spawn interval
+                float initialSpawnInterval = 2f; // Set the initial spawn interval
 
                 if (DateTime.Now >= nextSpawnTime) // If the current time is greater than the next spawn time
                 {
@@ -321,8 +320,8 @@ namespace GradedUnit
                     var elapsedTime = DateTime.Now - gameStartTime; // Get the elapsed seconds
 
                     float spawnInterval = initialSpawnInterval / (1 + ((float)elapsedTime.TotalSeconds / 30)); // Set the spawn interval
-                    // float random = (float)rand.NextDouble() + 0.5f; // Set the random number
-                    nextSpawnTime = DateTime.Now.AddSeconds(spawnInterval);// * random); // Set the next spawn time
+                    //float random = (float)rand.NextDouble() + 0.5f; // Set the random number
+                    nextSpawnTime = DateTime.Now.AddSeconds(spawnInterval);// *random); // Set the next spawn time
                 }
 
                 // Enemy movement
@@ -382,7 +381,11 @@ namespace GradedUnit
 
                 // Game over
                 if (player.playerHealth <= 0) // If the player health is less than or equal to 0
+                {
                     gameOver = true; // Set the game to over
+                    MediaPlayer.Stop();
+                    
+                }
             }   // End of !gameOver if
             previousKeyboardState = currentKeyboardState; // Set the previous keyboard state - Must be at the end of the update method
             base.Update(gameTime); // Update the game - Stays at the end of the update method   Down
@@ -410,7 +413,7 @@ namespace GradedUnit
                 _spriteBatch.DrawString(mainFont, "Score: " + player.score, new Vector2((GraphicsDevice.Viewport.Width / 2) - 50, GraphicsDevice.Viewport.Height - 150), Color.White); // Draw the score
                 _spriteBatch.DrawString(mainFont, "Press R to restart", new Vector2((GraphicsDevice.Viewport.Width / 2) - 100, GraphicsDevice.Viewport.Height - 100), Color.White); // Draw the restart text
                 if (Keyboard.GetState().IsKeyDown(Keys.R)) // If the R key is pressed
-                    ResetGame(); // Reset the game
+                ResetGame(); // Reset the game
             }
             else            // If the game is not over
             {
