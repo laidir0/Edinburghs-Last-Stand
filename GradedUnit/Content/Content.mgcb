@@ -91,6 +91,12 @@
 /processorParam:TextureFormat=Color
 /build:enemySoldier.png
 
+#begin enemyWalk.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:enemyWalk.wav
+
 #begin gameover.jpg
 /importer:TextureImporter
 /processor:TextureProcessor

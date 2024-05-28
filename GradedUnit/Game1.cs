@@ -138,9 +138,10 @@ namespace GradedUnit
             ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
             EnemyStruct[] enemies = new EnemyStruct[999];                        // Array of enemies
             int enemyIndex = 0;                                                 // The index of the enemy
+            int step = 0;
             DateTime gameStartTime = DateTime.Now;                              // The time the game started
             DateTime nextSpawnTime = DateTime.Now;                              // The time the next enemy will spawn
-            SoundEffect hitSound, playerMoveSFX, playerFireSFX, enemyDeathSFX;                                               // Any sounds being used
+            SoundEffect hitSound, playerMoveSFX, playerFireSFX, enemyDeathSFX, enemyWalkSFX;  // Any sounds being used
 
             // Assuming will need later, there for now
             Random rand = new Random();                                         // Random number generator
@@ -183,8 +184,9 @@ namespace GradedUnit
             // Load sounds
             hitSound = Content.Load<SoundEffect>("hitSound");
             playerMoveSFX = Content.Load<SoundEffect>("playerMove");                                                                            // player movement soundeffect added
-            playerFireSFX = Content.Load<SoundEffect>("playerFire");
-            enemyDeathSFX = Content.Load<SoundEffect>("enemyDeath");
+            playerFireSFX = Content.Load<SoundEffect>("playerFire");                                                                            // player fire arrow soundeffect
+            enemyDeathSFX = Content.Load<SoundEffect>("enemyDeath");                                                                            // enemy dying soundeffect
+            enemyWalkSFX = Content.Load<SoundEffect>("enemyWalk");                                                                              // enemy walking soundeffect
 
             // Load the player sprite
             player = new PlayerSprite(Content, "Archer1");                                                                                      // Load the player sprite
@@ -292,7 +294,7 @@ namespace GradedUnit
                 };
 
                 // Spawner
-                float initialSpawnInterval = 3f; // Set the initial spawn interval
+                float initialSpawnInterval = 1f; // Set the initial spawn interval
 
                 if (DateTime.Now >= nextSpawnTime) // If the current time is greater than the next spawn time
                 {
@@ -303,6 +305,7 @@ namespace GradedUnit
                     enemies[enemyIndex].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[enemyIndex].enemyRectangle.X, enemies[enemyIndex].enemyRectangle.Y, 0), enemies[enemyIndex].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
                     enemies[enemyIndex].enemyPosition = enemyLaneCoordinates[rand.Next(0, 5)]; // Set the enemy position to a random lane
                     enemyIndex++; // Increase the enemy index
+
 
                     if (enemyIndex >= enemies.Length) // If the enemy index is greater than or equal to the length of the enemies array
                         enemyIndex = 0; // Reset the enemy index
@@ -318,14 +321,21 @@ namespace GradedUnit
                 for (int i = 0; i < enemies.Length; i++) // Loop through the enemies
                     {
                         if (enemies[i].enemyAlive) // If the enemy is alive
+                        
                         {
                             enemies[i].enemyPosition.Y -= 1; // Move the enemy up the screen - TODO: Change to enemy speed - currently does not work
                             enemies[i].enemyRectangle.X = (int)enemies[i].enemyPosition.X; // Set the x position of the enemy rectangle
                             enemies[i].enemyRectangle.Y = (int)enemies[i].enemyPosition.Y; // Set the y position of the enemy rectangle
                             enemies[i].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[i].enemyPosition.X, enemies[i].enemyPosition.Y, 0), enemies[i].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
-
-                            // Check if the enemy is off the top of the screen
-                            if (enemies[i].enemyPosition.Y < 2 * tileSize && enemies[i].enemyAlive) // If the enemy is off the top of the screen
+                            step++;
+                        if (step == 60)
+                        {
+                            enemyWalkSFX.Play();
+                            step -= 61;
+                        }
+                        
+                        // Check if the enemy is off the top of the screen
+                        if (enemies[i].enemyPosition.Y < 2 * tileSize && enemies[i].enemyAlive) // If the enemy is off the top of the screen
                             {
                                 enemies[i].enemyAlive = false; // Set the enemy to not alive
                                 enemies[i].enemyHealth = 30; // Reset the enemy health
