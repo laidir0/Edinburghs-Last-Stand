@@ -137,7 +137,7 @@ namespace GradedUnit
         bool gameOver, mainMenu;                                            // If the game is over or on main menu
         PlayerSprite player;                                                // Player sprite
         ArrowStruct[] arrows = new ArrowStruct[100];                        // Array of arrows
-        EnemyStruct[] enemies = new EnemyStruct[999];                        // Array of enemies
+        EnemyStruct[] enemies = new EnemyStruct[999];                       // Array of enemies
         int enemyIndex = 0;                                                 // The index of the enemy
         int step = 0;
         DateTime gameStartTime = DateTime.Now;                              // The time the game started
@@ -306,7 +306,7 @@ namespace GradedUnit
                 if (DateTime.Now >= nextSpawnTime) // If the current time is greater than the next spawn time
                 {
                     enemies[enemyIndex].enemyAlive = true; // Set the enemy to alive
-                    enemies[enemyIndex].enemyHealth = 30; // Set the enemy healthbar
+                    enemies[enemyIndex].enemyHealth = 30; // Set the enemy health
                     enemies[enemyIndex].enemyRectangle.X = (int)enemyLaneCoordinates[rand.Next(0, 5)].X; // Set the x position of the enemy rectangle
                     enemies[enemyIndex].enemyRectangle.Y = (int)enemyLaneCoordinates[rand.Next(0, 5)].Y; // Set the y position of the enemy rectangle
                     enemies[enemyIndex].enemyBoundingSphere = new BoundingSphere(new Vector3(enemies[enemyIndex].enemyRectangle.X, enemies[enemyIndex].enemyRectangle.Y, 0), enemies[enemyIndex].enemyRectangle.Width / 2); // Set the bounding sphere of the enemy
